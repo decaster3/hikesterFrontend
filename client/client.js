@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
+import App from '../src/components/HomePage/App'
 class Main extends Component {
     render(){
         return (
-          <p>Lets1133 ewfeqweqwqewfgo!</p>
+          <App/>
         );
     }
 }
-render (<Main />, window.document.getElementById('app'))
+render (<Main/>, window.document.getElementById('app'))
