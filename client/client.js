@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import App from '../src/components/HomePage/App'
+import Form from '../src/components/Autorization/SignUp/Form'
 class Main extends Component {
     render(){
         return (
-          <App/>
+          <Form/>
         );
     }
 }
