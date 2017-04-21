@@ -10,7 +10,7 @@ class Search extends Component {
     }
 
   }
-  componentDidMount(){
+  componentWillMount(){
     var tags3 = []
     const url = "http://192.168.137.1:3000/v1/eventtypes"
     fetch(url)
@@ -21,17 +21,18 @@ class Search extends Component {
         tags3.push({id: r.id, name: r.name})
       })
       console.log(this.tags)
+    }).then(() => {
+      this.setState({
+        tags: tags3
+      });
     })
-     this.setState({
-       tags: tags3
-     })
+
 }
 
     render(){
         return (
           <div>
-          qwe
-          <Tags tags = {this.state.tags} />
+            <Tags tags = {this.state.tags} />
           </div>
         );
     }
