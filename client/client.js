@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import Form from '../src/components/Autorization/SignUp/Form'
+import Search from '../src/components/MainWorkSpace/FindEvent/Search'
 class Main extends Component {
+
     render(){
         return (
-          <Form/>
+          <Search/>
         );
     }
 }
