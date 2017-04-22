@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import 'whatwg-fetch'
+import styles from './search.scss'
 import Tags from './Tags'
 class Search extends Component {
 
@@ -22,7 +23,7 @@ class Search extends Component {
     .then((data) => {
       var result = data.event_types
       result.map((r) => {
-        if (r.parent_event_type_id === -1)
+        if (r.parent_event_type_id === 0)
           fisrstTags.push({id: r.id, name: r.name, parent: r.parent_event_type_id})
 
         var key1 = r.parent_event_type_id;
@@ -40,6 +41,7 @@ class Search extends Component {
         currentTags: fisrstTags,
         tags: allTags
       });
+      console.log(this.state.tags);
       //TODO
     })
 
@@ -59,7 +61,7 @@ class Search extends Component {
 
   render(){
     return (
-      <div>
+      <div className="search">
         <Tags  tags = {this.state.currentTags} allTags = {this.state.tags} changeTags = {this.handler} />
       </div>
 

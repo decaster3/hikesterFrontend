@@ -26,7 +26,9 @@ class Tags extends Component {
     var childs = this.getChilds(t)
 
     if (childs === undefined) {
+      childs = []
       this.props.changeTags(this, childs)
+      this.sendRequest(e.target.value)
     } else {
       this.state.request.push(e.target.value)
 
