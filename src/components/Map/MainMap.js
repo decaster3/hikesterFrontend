@@ -74,33 +74,6 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
   </GoogleMap>
 ));
 
-function generateInitialMarkers() {
-  const southWest = new google.maps.LatLng(55.752634, 48.744172);
-  const northEast = new google.maps.LatLng(55.752634, 48.744172);
-
-  const lngSpan = northEast.lng() - southWest.lng();
-  const latSpan = northEast.lat() - southWest.lat();
-  var m = {
-    position: southWest,
-    content: `This is the secret message`,
-    showInfo: false
-  }
-  const markers = [];
-  for (let i = 0; i < 5; i++) {
-    const position = new google.maps.LatLng(
-      southWest.lat() + latSpan * Math.random(),
-      southWest.lng() + lngSpan * Math.random()
-    );
-    markers.push({
-      position,
-      content: `This is the secret message`.split(` `)[i],
-      showInfo: false,
-    });
-  }
-  markers.push(m)
-  return markers;
-}
-
 /*
  * https://developers.google.com/maps/documentation/javascript/examples/event-closure
  *
@@ -110,10 +83,11 @@ export default class MainMap extends Component {
   constructor(props){
       super(props)
       this.state = {
+        events: [],
         center: null,
         content: null,
         radius: 2000,
-        markers: generateInitialMarkers(),
+        markers: this.generateInitialMarkers(),
       };
       this.isUnmounted = false;
       this.handleMarkerClick = this.handleMarkerClick.bind(this);
@@ -131,7 +105,6 @@ export default class MainMap extends Component {
       }
     };
     geolocation.getCurrentPosition((position) => {
-      console.log(position)
       if (this.isUnmounted) {
         return;
       }
@@ -156,6 +129,18 @@ export default class MainMap extends Component {
         content: `Error: The Geolocation service failed (${reason}).`,
       });
     });
+    geolocation.getCurrentPosition((position) => {
+          const url = 'http://192.168.137.1:3000/v1/events/show'+'?lat='
+           + position.coords.latitude + '&lng=' +position.coords.longitude + '&dist=1000'
+          fetch(url)
+          .then((response) => response.json())
+            .then((data) => {
+              var result = data.events
+              this.setState({events: result})
+              console.log(this.state.events)
+            })
+        })
+
   }
 
   componentWillUnmount() {
@@ -166,15 +151,32 @@ export default class MainMap extends Component {
     this.setState({
       markers: this.state.markers.map(marker => {
         if (marker === targetMarker) {
-          return {
-            marker,
+          return {Object.assign({}, this.state.marker, {
             showInfo: true,
+          })
+
           };
         }
         return marker;
       }),
     });
   }
+
+  generateInitialMarkers() {
+    const markers = [];
+    for (let i = 0; i < this.state.events.length; i++) {
+      var position1 = new google.maps.LatLng(this.state.events[i].latitude,this.state.events[i].longitude)
+      var m = {
+        position: position1,
+        content: `This is the secret message`,
+        showInfo: false
+      }
+      markers.push(m)
+    }
+    return markers
+  }
+
+
 
   handleCloseClick(targetMarker) {
     this.setState({
