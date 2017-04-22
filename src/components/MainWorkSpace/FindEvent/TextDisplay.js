@@ -6,9 +6,7 @@ class TextDisplay extends Component {
     }
 
     Search(e){
-      console.log(1);
       var value = JSON.parse(JSON.stringify(this.props.request));
-      console.log(value);
       console.log("Sending request: " + value);
     }
 
