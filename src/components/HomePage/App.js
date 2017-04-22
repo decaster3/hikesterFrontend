@@ -1,10 +1,10 @@
 
 import React, { Component } from 'react'
-
+import Search from '../MainWorkSpace/FindEvent/Search'
 class App extends Component {
 
   render() {
-    return <div>qweqewqwe</div>
+    return <Search/>
   }
 
 }

@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import Search from '../src/components/MainWorkSpace/FindEvent/Search'
+import App from '../src/components/HomePage/App'
 class Main extends Component {
 
     render(){
         return (
-          <Search/>
+          <App/>
         );
     }
 }

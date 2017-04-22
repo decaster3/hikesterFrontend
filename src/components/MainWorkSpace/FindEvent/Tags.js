@@ -26,7 +26,7 @@ class Tags extends Component {
     var childs = this.getChilds(t)
 
     if (childs === undefined) {
-      this.sendRequest(e.target.value)
+      this.props.changeTags(this, childs)
     } else {
       this.state.request.push(e.target.value)
 
@@ -56,7 +56,7 @@ class Tags extends Component {
     });
 
     return (<div>
-      <TextDisplay expr = {this.state.expr}/>
+      <TextDisplay expr = {this.state.expr} request = {this.state.request}/>
       {tags}
       </div>
     );

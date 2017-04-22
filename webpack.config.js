@@ -1,7 +1,9 @@
 var webpack = require('webpack');
 
 module.exports = {
+
   devtool: 'inline-source-map',
+
   entry: [
     'webpack-hot-middleware/client',
     './client/client.js'
@@ -25,6 +27,10 @@ module.exports = {
         query: {
           presets: ['react', 'es2015', 'react-hmre']
         }
+      },
+      {
+          test: /\.scss$/,
+          loaders: ['style', 'css', 'sass']
       }
     ]
   }
