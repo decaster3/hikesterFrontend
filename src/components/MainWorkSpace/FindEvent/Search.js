@@ -30,7 +30,6 @@ class Search extends Component {
     render(){
         return (
           <div>
-          qwe
           <Tags tags = {this.state.tags} />
           </div>
         );
