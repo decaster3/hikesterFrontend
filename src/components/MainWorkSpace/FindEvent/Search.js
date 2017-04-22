@@ -6,35 +6,78 @@ class Search extends Component {
   constructor(props){
     super(props)
     this.state = {
+      currentTags: [],
       tags: []
     }
-
+    this.handler = this.handler.bind(this)
   }
+
   componentWillMount(){
-    var tags3 = []
-    const url = "http://192.168.137.1:3000/v1/eventtypes"
-    fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      var result = data.event_types
-      result.map((r) => {
-        tags3.push({id: r.id, name: r.name})
-      })
-      console.log(this.tags)
-    }).then(() => {
-      this.setState({
-        tags: tags3
-      });
+
+    // const url = "http://192.168.137.1:3000/v1/eventtypes"
+    // fetch(url)
+    // .then((response) => response.json())
+    // .then((data) => {
+    //   var result = //data.event_types
+    //   result.map((r) => {
+    //     if (r.parent_event_type_id === -1)
+    //       fisrstTags.push({id: r.id, name: r.name, parent: r.parent_event_type_id})
+    //
+    //     allTags.push({key: r.parent_event_type_id, value: r});
+    //
+    //   })
+    // }).then(() => {
+    //   this.setState({
+    //     currentTags: fisrstTags,
+    //     tags: allTags
+    //   });
+    //   //TODO
+    //
+    //   console.log(this.state.tags["-1"])
+    // })
+    var fisrstTags = []
+    var allTags = []
+    var result = [{"id":1, "name":"type1", "parent_event_type_id":-1},
+                  {"id":2, "name":"type2", "parent_event_type_id":1},
+                  {"id":3, "name":"type22", "parent_event_type_id":1}]//data.event_types
+    var expected =
+    result.map((r) => {
+      if (r.parent_event_type_id === -1)
+        fisrstTags.push({id: r.id, name: r.name, parent: r.parent_event_type_id})
+
+      var key1 = r.parent_event_type_id;
+      var value = allTags[key1]
+
+      if (value === undefined) {
+        value = []
+      }
+
+      value.push(r);
+      allTags[key1.toString()] = value;
+
     })
 
-}
+    this.setState({
+      currentTags:fisrstTags,
+      tags: allTags
+    });
+  }
 
-    render(){
-        return (
-          <div>
-            <Tags tags = {this.state.tags} />
-          </div>
-        );
-    }
+  handler(e, ts) {
+  
+    this.setState({
+      currentTags: ts
+    })
+
+  }
+
+  render(){
+    return (
+      <div>
+        <Tags  tags = {this.state.currentTags} allTags = {this.state.tags} changeTags = {this.handler} />
+      </div>
+
+    );
+  }
 }
 export default Search

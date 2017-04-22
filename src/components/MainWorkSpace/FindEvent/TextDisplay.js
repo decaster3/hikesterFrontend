@@ -3,7 +3,7 @@ class TextDisplay extends Component {
 
     render(){
         return (
-          <button>Here will be text from tags {this.props.expr} </button>
+          <h1>Here will be text from tags {this.props.expr} </h1>
         );
     }
 }
