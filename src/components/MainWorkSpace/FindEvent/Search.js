@@ -36,7 +36,8 @@ class Search extends Component {
         value.push(r);
         allTags[key1.toString()] = value;
       })
-    }).then(() => {
+    })
+    .then(() => {
       this.setState({
         currentTags: fisrstTags,
         tags: allTags

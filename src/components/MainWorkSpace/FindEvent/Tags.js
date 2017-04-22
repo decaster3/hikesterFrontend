@@ -7,42 +7,28 @@ class Tags extends Component {
     super(props)
     this.state = {
       expr: "",
-      request: []
+      request: [],
     };
-
-    this.sendRequest = this.sendRequest.bind(this)
-  }
-
-
-  sendRequest(last){
-    var value = JSON.parse(JSON.stringify(this.state.request));
-    value.push(last)
-    console.log(value);
-    console.log("Sending request: " + value);
   }
 
   onButton(t, e){
+    var newExpr = this.state.expr.concat(" " + e.target.value);
+    this.setState({
+      expr: newExpr
+    })
+
+    this.state.request.push(e.target.value)
 
     var childs = this.getChilds(t)
 
     if (childs === undefined) {
       childs = []
-      this.props.changeTags(this, childs)
-      this.sendRequest(e.target.value)
-    } else {
-      this.state.request.push(e.target.value)
-
-      var newExpr = this.state.expr.concat(" " + e.target.value)
-      this.setState({
-        expr: newExpr
-      })
-      this.props.changeTags(this, childs)
     }
 
+    this.props.changeTags(this, childs)
   }
 
   getChilds(tag){
-
     var childs = this.props.allTags[tag.id.toString()]
     return childs
   }
@@ -58,7 +44,7 @@ class Tags extends Component {
     });
 
     return (<div>
-      <TextDisplay expr = {this.state.expr} request = {this.state.request}/>
+      <TextDisplay expr = {this.state.expr} request = {this.state.request} changeTags = {this.props.changeTags} tagsCount = {this.props.tags.length}/>
       {tags}
       </div>
     );
