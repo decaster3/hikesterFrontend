@@ -41,13 +41,7 @@ class Search extends Component {
         currentTags: fisrstTags,
         tags: allTags
       });
-      console.log(this.state.tags);
-      //TODO
     })
-
-    // var result = [{"id":1, "name":"type1", "parent_event_type_id":-1},
-    //               {"id":2, "name":"type2", "parent_event_type_id":1},
-    //               {"id":3, "name":"type22", "parent_event_type_id":1}]//data.event_types
 
   }
 

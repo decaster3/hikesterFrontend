@@ -5,9 +5,10 @@ import MainMap  from '../src/components/Map/MainMap'
 class Main extends Component {
 
     render(){
-        return (
-          <MainMap/>
-          <App/>
+        return (<div>
+            <MainMap/>
+            <App/>
+          </div>
         );
     }
 }

@@ -1,5 +1,5 @@
 import canUseDOM from "can-use-dom";
-
+import styles from './map.scss'
 import raf from "raf"
 
 import {
@@ -185,7 +185,7 @@ export default class MainMap extends Component {
   }
 
   render() {
-    return (
+    return (<div className="map">
       <ClosureListenersExampleGoogleMap
         containerElement={
           <div style={{ height: `100%` }} />
@@ -200,6 +200,7 @@ export default class MainMap extends Component {
         onCloseClick={this.handleCloseClick}
         markers={this.state.markers}
       />
+      </div>
     );
   }
 }
