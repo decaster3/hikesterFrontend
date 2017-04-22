@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
-import Form from '../src/components/Autorization/SignUp/Form'
+import App from '../src/components/HomePage/App'
+import MainMap  from '../src/components/Map/MainMap'
 class Main extends Component {
+
     render(){
-        return (
-          <Form/>
+        return (<div>
+            <MainMap/>
+            <App/>
+          </div>
         );
     }
 }
