@@ -73,29 +73,6 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
     })}
   </GoogleMap>
 ));
-
-function generateInitialMarkers() {
-  const southWest = new google.maps.LatLng(55.752634, 48.744172);
-  const northEast = new google.maps.LatLng(55.752634, 48.744172);
-
-  const lngSpan = northEast.lng() - southWest.lng();
-  const latSpan = northEast.lat() - southWest.lat();
-
-  const markers = [];
-  for (let i = 0; i < 1; i++) {
-    const position = new google.maps.LatLng(
-      southWest.lat() + latSpan * Math.random(),
-      southWest.lng() + lngSpan * Math.random()
-    );
-    markers.push({
-      position,
-      content: `This is the secret message`.split(` `)[i],
-      showInfo: false,
-    });
-  }
-  return markers;
-}
-
 /*
  * https://developers.google.com/maps/documentation/javascript/examples/event-closure
  *
@@ -108,12 +85,33 @@ export default class MainMap extends Component {
         center: null,
         content: null,
         radius: 2000,
-        markers: generateInitialMarkers(),
+        markers: [],
       };
       this.isUnmounted = false;
       this.handleMarkerClick = this.handleMarkerClick.bind(this);
       this.handleCloseClick = this.handleCloseClick.bind(this);
+      this.generateInitialMarkers = this.generateInitialMarkers.bind(this);
   }
+
+  generateInitialMarkers(e) {
+    const markers = [];
+
+    this.state.events.map((event)=> {
+      const lat = event.lattitude;
+      const lng = event.longitude;
+
+      const position = new google.maps.LatLng(lat,lng);
+
+      markers.push({
+        position,
+        content: `This is the secret message`,
+        showInfo: false,
+      });
+    })
+
+    return markers;
+  }
+
   componentDidMount() {
     const tick = () => {
       if (this.isUnmounted) {
@@ -150,6 +148,22 @@ export default class MainMap extends Component {
         content: `Error: The Geolocation service failed (${reason}).`,
       });
     });
+    geolocation.getCurrentPosition((position) => {
+          const url = 'http://192.168.137.1:3000/v1/events/show'+'?lat='
+           + position.coords.latitude + '&lng=' +position.coords.longitude + '&dist=1000'
+          fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            var result = data.events
+            this.setState({events: result})
+            console.log(this.state.events)
+          })
+          .then(() => {
+            this.setState({
+              markers: this.generateInitialMarkers()
+            })
+          })
+        })
   }
 
   componentWillUnmount() {
