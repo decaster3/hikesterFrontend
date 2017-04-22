@@ -80,9 +80,13 @@ function generateInitialMarkers() {
 
   const lngSpan = northEast.lng() - southWest.lng();
   const latSpan = northEast.lat() - southWest.lat();
-
+  var m = {
+    position: southWest,
+    content: `This is the secret message`,
+    showInfo: false
+  }
   const markers = [];
-  for (let i = 0; i < 1; i++) {
+  for (let i = 0; i < 5; i++) {
     const position = new google.maps.LatLng(
       southWest.lat() + latSpan * Math.random(),
       southWest.lng() + lngSpan * Math.random()
@@ -93,6 +97,7 @@ function generateInitialMarkers() {
       showInfo: false,
     });
   }
+  markers.push(m)
   return markers;
 }
 
@@ -126,6 +131,7 @@ export default class MainMap extends Component {
       }
     };
     geolocation.getCurrentPosition((position) => {
+      console.log(position)
       if (this.isUnmounted) {
         return;
       }
