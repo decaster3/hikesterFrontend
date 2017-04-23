@@ -24,8 +24,6 @@ const geolocation = (
     },
   })
 );
-
-
 const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
   <GoogleMap
     defaultZoom={13}
@@ -51,28 +49,37 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
     {props.markers.map((marker, index) => {
       const onClick = () => props.onMarkerClick(marker);
       const onCloseClick = () => props.onCloseClick(marker);
+      var str = marker.content;
+      console.log(str)
+      var content = <InfoWindow onCloseClick={onCloseClick}>
+      <div>
+        <p>{str}</p>
+        <br />
+        <em>The contents of this InfoWindow are actually ReactElements.</em>
+      </div>
+      </InfoWindow>
+
+      if (!marker.showInfo){
+
+        content = ""
+      }
+
 
       return (
         <Marker
-          key={index}
-          position={marker.position}
-          title={(index + 1).toString()}
-          onClick={onClick}
-        >
-          {marker.showInfo && (
-            <InfoWindow onCloseClick={onCloseClick}>
-              <div>
-                <strong>{marker.content}</strong>
-                <br />
-                <h1>EVENT1</h1><button>Join</button>
-              </div>
-            </InfoWindow>
-          )}
-        </Marker>
+         key={index}
+         position={marker.position}
+         title={(index + 1).toString()}
+         onClick={onClick}
+       >
+       {content}
+       </Marker>
       );
     })}
   </GoogleMap>
 ));
+
+
 /*
  * https://developers.google.com/maps/documentation/javascript/examples/event-closure
  *
@@ -86,14 +93,17 @@ export default class MainMap extends Component {
         content: null,
         radius: 2000,
         markers: [],
+        kostilimarkers: []
       };
       this.isUnmounted = false;
       this.handleMarkerClick = this.handleMarkerClick.bind(this);
       this.handleCloseClick = this.handleCloseClick.bind(this);
       this.generateInitialMarkers = this.generateInitialMarkers.bind(this);
+      this.kostil = this.kostil.bind(this);
+
   }
 
-  generateInitialMarkers(e) {
+  generateInitialMarkers() {
     const markers = [];
 
     this.state.events.map((event)=> {
@@ -101,10 +111,11 @@ export default class MainMap extends Component {
       const lng = event.longitude;
 
       const position = new google.maps.LatLng(lat,lng);
+      const content = `This is the secret message`;
 
       markers.push({
         position,
-        content: `This is the secret message`,
+        content: "This is the secret message",
         showInfo: false,
       });
     })
@@ -113,6 +124,7 @@ export default class MainMap extends Component {
   }
 
   componentDidMount() {
+    this.kostil()
     const tick = () => {
       if (this.isUnmounted) {
         return;
@@ -165,6 +177,24 @@ export default class MainMap extends Component {
           })
         })
   }
+  kostil(){
+    geolocation.getCurrentPosition((position) => {
+          const url = 'http://192.168.137.1:3000/v1/events/show'+'?lat='
+           + position.coords.latitude + '&lng=' +position.coords.longitude + '&dist=1000'
+          fetch(url)
+          .then((response) => response.json())
+          .then((data) => {
+            var result = data.events
+            this.setState({events: result})
+            console.log(this.state.events)
+          })
+          .then(() => {
+            this.setState({
+              kostilimarkers: this.generateInitialMarkers()
+            })
+          })
+        })
+  }
 
   componentWillUnmount() {
    this.isUnmounted = true;
@@ -182,6 +212,7 @@ export default class MainMap extends Component {
         return marker;
       }),
     });
+
   }
 
   handleCloseClick(targetMarker) {
@@ -196,6 +227,10 @@ export default class MainMap extends Component {
         return marker;
       }),
     });
+    this.setState({
+      markers: this.state.kostilimarkers
+    })
+
   }
 
   render() {
