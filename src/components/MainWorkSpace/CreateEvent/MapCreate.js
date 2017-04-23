@@ -43,8 +43,9 @@ const GeolocationExampleGoogleMap = withGoogleMap(props => (
         }}
       />
     )}
-    {props.markers.map((marker, index) =>
-      <Marker position={marker.position} key={index} />
+    {props.markers.map((marker, index) =>{
+
+      return <Marker position={marker.position} key={index} />}
     )}
   </GoogleMap>
 ));
@@ -62,6 +63,7 @@ export default class MapCreate extends Component {
       center: null,
       content: null,
       radius: 2000,
+      location: {}
     };
     this.handleMapClick = this.handleMapClick.bind(this)
     this.isUnmounted = false;
@@ -112,15 +114,23 @@ export default class MapCreate extends Component {
   }
 
   handleMapClick(event) {
+    this.state.markers = []
+
     this.setState({
-      center: event.latLng,
+      // ter: event.latLng,
       markers: [
         ...this.state.markers,
         { position: event.latLng },
       ],
     });
-  
-    this.props.locationn = this.state.markers[0].position
+
+    var lat = this.state.markers[0].position.lat();
+    var lng = this.state.markers[0].position.lng();
+    this.state.location = {"lat": lat, "lng": lng}
+
+    // console.log(this.state.location);
+    // this.props.location = this.state.location
+    this.props.setLocation({"lat": lat, "lng": lng})
   }
 
   render() {
@@ -138,6 +148,7 @@ export default class MapCreate extends Component {
         content={this.state.content}
         radius={this.state.radius}
       />
+      // <FormCreate location = />
     );
   }
 }

@@ -5,13 +5,20 @@ class MainCreate extends Component {
   constructor (props){
     super(props)
     this.state = {
-      location: {}
+      location: {1:2}
     }
   }
+
+  setLocation(location, e) {
+    this.setState({
+      location: location
+    })
+  }
+
   render(){
       return (<div>
-          <FormCreate location = {this.state.location}/>
-          <MapCreate locationn = {this.state.location}/>
+        <FormCreate location = {this.state.location}/>
+          <MapCreate setLocation = {this.setLocation.bind(this)}/>
         </div>
       );
   }
