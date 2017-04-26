@@ -20,7 +20,7 @@ const geolocation = (
   navigator.geolocation :
   ({
     getCurrentPosition(success, failure) {
-      failure(`Your browser doesn't support geolocation.`);
+      failure("Your browser doesn't support geolocation.");
     },
   })
 );
@@ -41,16 +41,19 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
         center={props.center}
         radius={props.radius}
         options={{
-          fillColor: `red`,
+          fillColor: 'red',
           fillOpacity: 0.20,
-          strokeColor: `red`,
+          strokeColor: 'red',
           strokeOpacity: 1,
           strokeWeight: 1,
-        }}
-      />  )}
+        }} />
+        )}
     {props.markers.map((marker, index) => {
       const onClick = () => props.onMarkerClick(marker);
       const onCloseClick = () => props.onCloseClick(marker);
+      const m = marker;
+
+      console.log(marker);
 
       return (
         <Marker
@@ -62,9 +65,11 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
           {marker.showInfo && (
             <InfoWindow onCloseClick={onCloseClick}>
               <div>
-                <strong>{marker.content}</strong>
-                <br />
-                <h1>EVENT1</h1><button>Join</button>
+                <h2>Название мероприятние</h2>
+                <div>
+                  Описание мероприятия
+                </div>
+                <button className="button submit">Присоединиться</button>
               </div>
             </InfoWindow>
           )}
@@ -86,11 +91,13 @@ export default class MainMap extends Component {
         content: null,
         radius: 2000,
         markers: [],
+        kostil_markers: []
       };
       this.isUnmounted = false;
       this.handleMarkerClick = this.handleMarkerClick.bind(this);
       this.handleCloseClick = this.handleCloseClick.bind(this);
       this.generateInitialMarkers = this.generateInitialMarkers.bind(this);
+      this.kistil = this.kostil.bind(this)
   }
 
   generateInitialMarkers(e) {
@@ -102,9 +109,12 @@ export default class MainMap extends Component {
 
       const position = new google.maps.LatLng(lat,lng);
 
+      console.log(event);
+
       markers.push({
         position,
-        content: `This is the secret message`,
+        description: event.description,
+        name: event.name,
         showInfo: false,
       });
     })
@@ -113,6 +123,7 @@ export default class MainMap extends Component {
   }
 
   componentDidMount() {
+    this.kostil()
     const tick = () => {
       if (this.isUnmounted) {
         return;
@@ -166,6 +177,26 @@ export default class MainMap extends Component {
         })
   }
 
+
+  kostil(){
+    geolocation.getCurrentPosition((position) => {
+      const url = 'http://192.168.137.1:3000/v1/events/show'+'?lat='
+       + position.coords.latitude + '&lng=' +position.coords.longitude + '&dist=1000'
+      fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        var result = data.events
+        this.setState({events: result})
+        console.log(this.state.events)
+      })
+      .then(() => {
+        this.setState({
+          kostil_markers: this.generateInitialMarkers()
+        })
+      })
+    })
+  }
+
   componentWillUnmount() {
    this.isUnmounted = true;
  }
@@ -196,6 +227,9 @@ export default class MainMap extends Component {
         return marker;
       }),
     });
+    this.setState({
+      markers: this.state.kostil_markers
+    })
   }
 
   render() {

@@ -1,0 +1,5 @@
+.map {
+  width: 100%;
+  min-height: calc(100% - 60px);
+  border: 0;
+}

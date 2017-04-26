@@ -1,0 +1,158 @@
+header {
+  background-color: #fff;
+  height: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 1px;
+}
+
+header .container {
+  text-transform: uppercase;
+  font-size: 16px;
+  font-weight: 600;
+  height: 100%;
+}
+
+header ul {
+  margin-bottom: 0px;
+}
+
+header li.logo {
+  position: relative;
+  top: -2px;
+  display: inline-block;
+  /*border-left: 1px solid #202020*/
+}
+header li.logo .logo-image {
+  position: relative;
+  top: -1px;
+  height: 40px;
+  color: #000;
+}
+header li.button-menu {
+  background-color: rgb(0, 115, 190);
+}
+header li.button-menu button {
+  background-color: transparent;
+  border: none;
+}
+header li.button-menu a,
+header li.button-menu button {
+  color: #fff;
+}
+header li.button-menu:hover {
+  background-color: rgb(0, 132, 195);
+  color: #fff;
+}
+header ul li {
+  display: inline-block;
+  /*border-right: 1px solid #202020;*/
+}
+header .header-menu-right ul li {
+  /*border-left: 1px solid #202020;*/
+}
+header ul li a,
+header ul li button {
+  color: #000;
+  display: block;
+  line-height: 60px;
+  /*height: 100%;*/
+  padding: 0 20px 0;
+  /*text-transform: none;*/
+}
+
+header ul.menu-items {
+  padding-left: 0px;
+  margin-bottom: 0px;
+  display: inline-block;
+}
+header .menu-items li a i,
+header .menu-items li button i {
+  display: none;
+}
+
+header .header-menu-right {
+  float: right;
+}
+
+header i.fa {
+  line-height: 60px;
+}
+
+
+.header-menu {
+  float: left;
+  height: 100%;
+}
+.header-menu-right {
+  float: right;
+}
+
+.header-border {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  height: 10px;
+  width: 100%;
+  background-color: rgb(250, 193, 12);
+}
+
+
+/*
+  MENU
+*/
+
+.menu-toggle-button:hover {
+  color: #777;
+  cursor: pointer;
+}
+
+
+/* MOBILES */
+@media (max-width: 767px) {
+  #menu-toggle:checked + .container .menu-items-parent {
+    display: block !important;
+  }
+
+  header .header-menu {
+    background-color: #fff;
+  }
+
+  #menu-toggle:checked + .container .header-menu ul.menu-items {
+    display: block !important;
+  }
+
+  header ul.menu-items {
+    display: none;
+    background-color: #fff;
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+  }
+
+  header .menu-items li {
+    display: block;
+    border-bottom: 1px solid #404040;
+  }
+
+  header .menu-items li:hover a i,
+  header .menu-items li:hover button i {
+    color: #fff;
+  }
+
+  header .menu-items li a i,
+  header .menu-items li button i {
+    display: inline-block;
+    float: right;
+  }
+}
+
+/* TABLETS */
+@media (min-width: 768px) and (max-width: 991px) {
+
+}
