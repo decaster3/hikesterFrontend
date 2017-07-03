@@ -4,17 +4,28 @@ import style from './form.scss';
 import Tags from './Tags';
 import {browserHistory} from 'react-router';
 
+var firebase = require('../firebasecomp.js')();
+
+var database = firebase.database().ref();
+
 class FormCreate extends Component {
   constructor(props){
     super(props);
     var arr = ["Go on trip", "by car"]
 
-    this.state = {
+    this.state = {      
       description: '',
       title: '',
       location: {},
       date: '',
       time: '',
+      locality: '',
+      country: '',
+      cost: '',
+      address: '',
+      duration: '',
+      people_count: '',
+      creator_rating: '5',
       types: [...arr],
       tags: [],
       currentSelectedTags: [],
@@ -26,35 +37,41 @@ class FormCreate extends Component {
   }
 
   componentWillMount() {
+
     var firstTags = [];
     var allTags = [];
-    const url = "http://192.168.137.1:3000/v1/eventtypes";
+    var types = [];
+    var t = this;
+    
+    database.child("event_types").orderByKey().once("value", function(snapshot) {
+      firstTags = snapshot.val()
+      allTags = snapshot.val()
+     snapshot.val().map((r) => {
 
-    fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      var result = data.event_types
-      result.map((r) => {
-        if (r.parent_event_type_id === 0)
-          firstTags.push({id: r.id, name: r.name, parent: r.parent_event_type_id})
+        // if (r.parent_event_type_id === 0)
+        //   firstTags.push({id: r.id, name: r.name, parent: r.parent_event_type_id})
 
-        var key1 = r.parent_event_type_id;
-        var value = allTags[key1]
+        // var key1 = r.parent_event_type_id;        
+        // var value = allTags[key1]
 
-        if (value === undefined) {
-          value = []
-        }
+        // if (value === undefined) {
+        //   value = []
+        // }
 
-        value.push(r);
-        allTags[key1.toString()] = value;
-      });
-    }).then(() => {
-      this.setState({
+        // value.push(r);
+        // allTags[key1.toString()] = value;      
+
+      });  
+        t.setState({
         currentTags: firstTags,
         tags: allTags,
-        currentSelectedTags: []
-      });
+        currentSelectedTags: ''
+      }); 
+
+  
     });
+
+  
   }
 
   onSubmit(e){
@@ -62,49 +79,51 @@ class FormCreate extends Component {
     this.state.location = this.props.location;
     e.preventDefault();
 
-    const url = "http://192.168.137.1:3000/v1/event/new"
+    var url = database.child("events");
 
-    var values = {
-      "profile_id": 1,
+    var values = {      
+      "people_count": 1,      
+      "creator_id": 0,
       "name": this.state.title,
       "description": this.state.description,
       "lattitude": this.state.location.lat,
       "longitude": this.state.location.lng,
       "date": this.state.date,
+      "locality": this.state.locality,
+      "country": this.state.country,
       "time": this.state.time,
-      "types": this.state.currentSelectedTags
-    }
+      "people_count": this.state.time.people_count,
+      "creator_rating": '5',
+      "duration": this.state.duration,
+      "cost": this.state.cost,
+      "address": this.state.address,
+      "type": this.state.currentSelectedTags,
+      "users":{
+        "0": 0
+      }
+    };
 
-    values["types"] = values["types"].map(type => {
-      return type.name;
-    });
+    
 
     var data = new FormData();
 
     for(var key in values) {
-        data.append(key, values[key]);
-        console.log(key + " " + values[key]);
+        data.append(key, values[key]);        
     }
-
-    console.log(values);
-    console.log(data);
-
-    fetch(url,
-    {
-        method: "POST",
-        body: data
-    })
-    .then((response) => {
-      console.log(response);
-      return response.json();
-    }).then((data) => {
-      console.log(data);
-      console.log("Event created: " + data);
-      browserHistory.push('/single/' + data);
-    })
+    
+    
+    var push = url.push();
+    var key = push.key;
+    values.event_id = key;
+    push.set(values);
 
 
-  };
+
+    console.log(key);
+    browserHistory.push('/single/' + key);    
+
+
+  }
 
   onChange(e){
     this.setState({
@@ -125,6 +144,7 @@ class FormCreate extends Component {
   }
 
   render(){
+     console.log(this.state.currentTags)
     return (
       <div className="flex-40 content-form events-create">
         <form onSubmit = {this.onSubmit}>
@@ -151,6 +171,63 @@ class FormCreate extends Component {
           </div>
 
           <div className="form-group">
+            <h4>Город</h4>
+            <input
+            value = {this.state.locality}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'locality'
+            placeholder = 'LA'
+            />
+          </div>
+
+          <div className="form-group">
+            <h4>Страна</h4>
+            <input
+            value = {this.state.country}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'country'
+            placeholder = 'USA'
+            />
+          </div>
+
+          <div className="form-group">
+            <h4>Адрес</h4>
+            <input
+            value = {this.state.address}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'address'
+            placeholder = 'Brooklyn'
+            />
+          </div>
+
+          <div className="form-group">
+            <h4>Продолжительность(Часы)</h4>
+            <input
+            value = {this.state.duration}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'duration'
+            placeholder = '5'
+            />
+          </div>
+
+          <div className="form-group">
+            <h4>Стоимость</h4>
+            <input
+            value = {this.state.cost}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'cost'
+            placeholder = '10'
+            />
+          </div>
+
+
+
+          <div className="form-group">
             <h4>Дата</h4>
             <input
             value = {this.state.date}
@@ -175,7 +252,7 @@ class FormCreate extends Component {
           <div className="filters">
             <div className="tag-filter">
               <h4>Выберите тэг</h4>
-              <Tags tags={this.state.currentTags} allTags={this.state.tags} changeTags={this.handler.bind(this)} selectTag={this.selectTag.bind(this)} isClickable={true}/>
+              <Tags tags={this.state.tags} allTags={this.state.tags} changeTags={this.handler.bind(this)} selectTag={this.selectTag.bind(this)} isClickable={true}/>
             </div>
             <div className="tag-selected">
               <h4>Выбранные тэги</h4>

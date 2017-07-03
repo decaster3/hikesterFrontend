@@ -49,19 +49,23 @@ class Tags extends Component {
   }
 
   render() {
-    var tags = this.props.tags.map((t) => {
+    console.log(this.props.tags)
+    var tags = this.props.tags
+    //var tags = this.props.tags.map((t) => 
+     for (var i = 0; i < tags.length; i++) {
       if (this.props.isClickable) {
         return (
-          <button className="button tag" type="button" id={t.id} value={t.name} onClick={this.onButton.bind(this, t)}>{t.name}</button>
+          <button className="button tag" type="button" id={tags[i].id} value={tags[i].name} onClick={this.onButton.bind(this, tags[i])}>{tags[i].name}</button>
         );
       } else {
-        return (
-          <button className="button tag" type="button" id={t.id} value={t.name}>{t.name}</button>
+        console.log(tags[i]);
+        return (           
+          <button className="button tag" type="button" id={tags[i].id} value={tags[i].name}>{tags[i].name}</button>
         );
       }
-    });
+    }
 
-    console.log(tags);
+   
 
     return (
       <div>

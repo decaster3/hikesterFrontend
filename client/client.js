@@ -7,6 +7,10 @@ import CreateEventLayout from '../src/components/Layouts/CreateEventLayout';
 import SearchEvent from '../src/components/Event/Search';
 import CreateEvent from '../src/components/Event/MainCreate';
 import SingleEvent from '../src/components/Event/MainSingle';
+import Profile from '../src/components/Event/Profile';
+import Login from '../src/components/Event/Login';
+
+    
 
 class Main extends Component {
 
@@ -18,8 +22,11 @@ class Main extends Component {
           </Route>
           <Route path="/create" component={CreateEvent} />
           <Route path="/single/:id" component={SingleEvent} />
+          <Route path="/profile" component={Profile}/>   
+          <Route path="/login" component={Login}/>         
         </Router>
       );
     }
 }
 render (<Main/>, window.document.getElementById('app'))
+

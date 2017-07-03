@@ -24,6 +24,8 @@ class Navbar extends React.Component {
           <div className="header-menu header-menu-right">
             <ul className="menu-items">
               <li className="button-menu"><a id="create-event-button" href="/create">Создать событие<i className="fa fa-chevron-left" aria-hidden="true"></i></a></li>
+              <li className="button-menu"><a id="create-event-button" href="/profile">Профиль<i className="fa fa-chevron-left" aria-hidden="true"></i></a></li>
+              <li className="button-menu"><a id="create-event-button" href="/login">Авторизация<i className="fa fa-chevron-left" aria-hidden="true"></i></a></li>
             </ul>
           </div>
           <div className="header-menu-right hidden-sm hidden-md hidden-lg">

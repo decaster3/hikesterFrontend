@@ -4,6 +4,12 @@ import styles from './form.scss'
 import Tags from './Tags'
 import EventList from './EventList'
 
+var firebase = require('../firebasecomp.js')();
+
+var database = firebase.database().ref();
+
+
+
 class Search extends Component {
 
   constructor(props) {
@@ -19,16 +25,20 @@ class Search extends Component {
     this.sendRequest = this.sendRequest.bind(this)
   }
 
+
+
+
   componentWillMount() {
+
     var firstTags = [];
     var allTags = [];
-    const url = "http://192.168.137.1:3000/v1/eventtypes";
+    var types = [];
+    var t = this;
+    
+    database.child("EventTypes").orderByKey().once("value", function(snapshot) {
 
-    fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      var result = data.event_types
-      result.map((r) => {
+     snapshot.val().map((r) => {
+
         if (r.parent_event_type_id === 0)
           firstTags.push({id: r.id, name: r.name, parent: r.parent_event_type_id})
 
@@ -40,15 +50,21 @@ class Search extends Component {
         }
 
         value.push(r);
-        allTags[key1.toString()] = value;
-      });
-    }).then(() => {
-      this.setState({
+        allTags[key1.toString()] = value;      
+
+      });  
+        t.setState({
         currentTags: firstTags,
-        tags: allTags
-      });
+        tags: allTags,
+        currentSelectedTags: []
+      }); 
+  
     });
+
+   
   }
+
+
 
   handler(e, ts) {
     this.setState({
@@ -64,7 +80,7 @@ class Search extends Component {
 
   sendRequest(e) {
     var value = JSON.parse(JSON.stringify(this.state.currentSelectedTags));
-    const url = "http://192.168.137.1:3000/v1/event/search"
+    var url = database.child('search');
     value = value.map(type => {
       return type.name;
     });
@@ -72,20 +88,19 @@ class Search extends Component {
     var data = new FormData();
     data.append("types", value[value.length - 1]);
 
-    console.log(value[value.length - 1]);
 
-    fetch(url,
-    {
-        method: "POST",
-        body: data
-    })
-    .then((response) => response.json())
-    .then((data) => {
+    
+    var push = url.push();
+    var key = push.key;
+    push.set(value);
+
+    url.child(key).on('child_changed', function(snap){
+      var val = snap.val();
       this.setState({
-        events: data.events,
+        events: val.events,
         currentSelectedTags: [],
         currentTags: this.state.tags["0"]
-      });
+      });   
     });
   }
 

@@ -2,6 +2,9 @@ import React from 'react';
 import style from './form.scss';
 import Tags from './Tags';
 
+var firebase = require('../firebasecomp.js')();
+var database = firebase.database().ref('Events');
+
 class Single extends React.Component {
 
   constructor(props) {
@@ -15,60 +18,49 @@ class Single extends React.Component {
   }
 
   componentWillMount() {
-    const url = "http://192.168.137.1:3000/v1/event?id=" + this.props.id
-
-    fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      var event = data.events[0];
-      var tags = data.events[1].events;
-      var showJoinButton = data.events[2].events.length == 0;
-      console.log(data.events[2].events.length > 0);
-      console.log(event);
-      console.log(tags);
-      console.log(showJoinButton);
-      this.setState({people_count: data.events[2].events.length});
-      this.setState({tags});
-      this.setState(event);
-      this.setState({showJoinButton: showJoinButton});
-      event.showJoinButton = showJoinButton;
-
-      console.log(this);
-
-      this.props.eventHandle(event);
+   
+   var newEvent = []
+  
+    database.child(this.props.id).once('value', function(snapshot){
+      newEvent = snapshot.val();      
+      newEvent.showJoinButton = true;
+      var arrayOfTags = new Array();
+      for (var items in newEvent.tags){
+      arrayOfTags.push( newEvent.tags[items] );
+      }
+      newEvent.tags = arrayOfTags;
+      console.log(arrayOfTags);
     });
+    
+
+
+
+    
+    this.state = newEvent;
+    console.log(this.state);    
   }
 
   joinHandler(e) {
-    const url = "http://192.168.137.1:3000/v1/event/user";
+    var url = database.child(this.state.event_id + '/Users');
 
-    var data = new FormData();
+    var data = {'profile_id': 1}; 
 
-    var id = $(e.target).data('id');
+    var id = this.state.event_id;
 
-    data.append('profile_id', 1);
-    data.append('event_id', id);
+       
 
-    console.log(id);
+    console.log(data);
 
-    fetch(url,
-    {
-        method: "POST",
-        body: data
-    })
-    .then((response) => {
-      console.log(response);
-      if (response.ok == true) {
-        this.setState({showJoinButton: false});
-      }
-      // response.json()
-    }).then((data) => {
+    var push = url.push();
+
+    push.set(data);
+      
+      var push2 =  database.child(this.state.event_id + '/people_count');      
       var people_count = this.state.people_count + 1;
+      push2.set(people_count);
       this.setState({people_count: people_count})
-      console.log(data);
-      console.log("EventUser created: " + data);
-
-    })
+      this.state.showJoinButton = false;
+     
   }
 
   render() {

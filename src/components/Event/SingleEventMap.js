@@ -153,7 +153,7 @@ export default class SingleEventMap extends Component {
   }
 
   joinHandler(e) {
-    const url = "http://192.168.137.1:3000/v1/event/user";
+    const url = "http://localhost:3000/v1/event/user";
 
     var id = $(e.target).data('id');
 

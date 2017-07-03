@@ -8,7 +8,11 @@ class MainCreate extends Component {
   constructor (props){
     super(props)
     this.state = {
-      events: []
+      events: [],
+      name:"",
+      age:0,
+      country:"",
+      Facebook:""
     }
     this.eventGetHandler = this.eventGetHandler.bind(this);
   }
@@ -23,14 +27,13 @@ class MainCreate extends Component {
   render(){
       return (
         <div>
-          <Navbar />
-          <div className="flex">
+          <Navbar />        
             <Single id={this.props.params.id} eventHandle={this.eventGetHandler} />
             <div className="flex-60 content-map">
               <SingleEventMap className="map" events={this.state.events} center={{lat: 55.7556, lng: 55.7556}} content={"text"}/>
             </div>
           </div>
-        </div>
+       
       );
   }
 }

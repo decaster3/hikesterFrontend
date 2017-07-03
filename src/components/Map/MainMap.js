@@ -2,6 +2,8 @@ import canUseDOM from "can-use-dom";
 import styles from './map.scss'
 import raf from "raf"
 
+
+
 import {
   default as React,
   Component,
@@ -14,6 +16,33 @@ import {
   Circle,
   InfoWindow,
 } from "react-google-maps";
+
+var firebase = require('../firebasecomp.js')();
+const geofire = require('geofire');
+const geofireRef = new geofire(firebase.database().ref('locations'))
+
+//-----GeoFire-----------------------
+geofireRef.set('1', [12.4215,24.56436]).then(function() {
+ 
+ })
+geofireRef.set('2', [28.4215,45.56436]).then(function() {
+ 
+ })
+geofireRef.set('3', [28.4215,45.56436]).then(function() {
+ 
+ })
+
+var geoQuery = geofireRef.query({
+  center: [28.3215,45.77436],
+  radius: 100 //kilometers
+});
+
+ geoQuery.on("key_entered", function(key, location, distance) {
+        console.log("Bicycle shop " + key + " found at " + location + " (" + distance + " km away)");
+      });
+  
+//-----------------------------------------
+
 
 const geolocation = (
   canUseDOM && navigator.geolocation ?
@@ -41,9 +70,9 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
         center={props.center}
         radius={props.radius}
         options={{
-          fillColor: 'red',
+          fillColor: 'blue',
           fillOpacity: 0.20,
-          strokeColor: 'red',
+          strokeColor: 'blue',
           strokeOpacity: 1,
           strokeWeight: 1,
         }} />
@@ -53,7 +82,7 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
       const onCloseClick = () => props.onCloseClick(marker);
       const m = marker;
 
-      console.log(marker);
+      
 
       return (
         <Marker
@@ -109,8 +138,6 @@ export default class MainMap extends Component {
 
       const position = new google.maps.LatLng(lat,lng);
 
-      console.log(event);
-
       markers.push({
         position,
         description: event.description,
@@ -123,6 +150,7 @@ export default class MainMap extends Component {
   }
 
   componentDidMount() {
+   
     this.kostil()
     const tick = () => {
       if (this.isUnmounted) {
@@ -160,14 +188,14 @@ export default class MainMap extends Component {
       });
     });
     geolocation.getCurrentPosition((position) => {
-          const url = 'http://192.168.137.1:3000/v1/events/show'+'?lat='
+          const url = 'http://localhost:3000/v1/events/show'+'?lat='
            + position.coords.latitude + '&lng=' +position.coords.longitude + '&dist=1000'
           fetch(url)
           .then((response) => response.json())
           .then((data) => {
             var result = data.events
             this.setState({events: result})
-            console.log(this.state.events)
+            //console.log(this.state.events)
           })
           .then(() => {
             this.setState({
@@ -180,14 +208,14 @@ export default class MainMap extends Component {
 
   kostil(){
     geolocation.getCurrentPosition((position) => {
-      const url = 'http://192.168.137.1:3000/v1/events/show'+'?lat='
+      const url = 'http://localhost:3000/v1/events/show'+'?lat='
        + position.coords.latitude + '&lng=' +position.coords.longitude + '&dist=1000'
       fetch(url)
       .then((response) => response.json())
       .then((data) => {
         var result = data.events
         this.setState({events: result})
-        console.log(this.state.events)
+        //console.log(this.state.events)
       })
       .then(() => {
         this.setState({
