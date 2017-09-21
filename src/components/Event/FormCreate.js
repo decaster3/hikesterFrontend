@@ -17,7 +17,7 @@ class FormCreate extends Component {
     super(props);
     var arr = ["Go on trip", "by car"]
 
-    this.state = {      
+    this.state = {
       description: '',
       title: '',
       lat: '',
@@ -29,7 +29,7 @@ class FormCreate extends Component {
       locality: '',
       country: '',
       cost: '',
-      address: '',      
+      address: '',
       people_count: '',
       creator_rating: '5',
       types: [...arr],
@@ -45,7 +45,7 @@ class FormCreate extends Component {
   }
 
   getCurUser(snap){
-     
+
       this.currentUser = snap.val()
   }
 
@@ -68,17 +68,17 @@ class FormCreate extends Component {
     database.child("event_types").orderByKey().once("value", function(snapshot) {
        firstTags = Array.from(snapshot.val())
       allTags = Array.from(snapshot.val())
-     
+
         t.setState({
         currentTags: firstTags,
         tags: allTags,
         currentSelectedTags: []
-  }); 
-
-  
   });
 
-  
+
+  });
+
+
   }
 
 
@@ -91,11 +91,11 @@ class FormCreate extends Component {
     var url = database.child("events");
     var user = firebase.auth().currentUser;
     console.log(user)
-    if (user) {    
-   
+    if (user) {
+
     console.log(this.currentUser)
-    var values = {      
-      "people_count": 1,      
+    var values = {
+      "people_count": 1,
       "creator": this.currentUser,
       "name": this.state.title,
       "description": this.state.description,
@@ -106,24 +106,24 @@ class FormCreate extends Component {
       "time_begin": this.state.time_begin,
       "date_end": this.state.date_end,
       "locality": this.state.locality,
-      "country": this.state.country,           
-      "creator_rating": parseFloat('5'),      
+      "country": this.state.country,
+      "creator_rating": parseFloat('5'),
       "cost": parseFloat(this.state.cost),
       "address": this.state.address,
       "type": this.state.currentSelectedTags[0]['name'],
-      "participants":this.currentUser          
-      
+      "participants":this.currentUser
+
     };
 
-    
+
 
     var data = new FormData();
 
     for(var key in values) {
-        data.append(key, values[key]);        
+        data.append(key, values[key]);
     }
-    
-    
+
+
     var push = url.push();
     var key = push.key;
     values.event_id = key;
@@ -133,11 +133,11 @@ class FormCreate extends Component {
     var usersRef = usersrUrl.child(this.currentUser['t0d1czkMysbAT3hL8rNPURXSNjr2'].id).child("events/"+values.event_id.toString()).set(values)
 
     geofireRef.set(values.event_id, [values.lat,values.lng]).then(function() {
- 
+
     })
 
     console.log(key);
-    browserHistory.push('/single/' + key);  
+    browserHistory.push('/single/' + key);
     }
 
     else {
@@ -164,6 +164,7 @@ class FormCreate extends Component {
   }
 
   render(){
+<<<<<<< HEAD
     if(firebase.auth().currentUser != null)
     {
       return (
@@ -299,6 +300,134 @@ class FormCreate extends Component {
                 <button className="button submit">Создать событие</button>
 
               </form>
+=======
+     console.log(this.state.currentTags)
+    return (
+      <div className="flex-40 content-form events-create">
+        <form onSubmit = {this.onSubmit}>
+
+          <div className="form-group">
+            <h4>Название события</h4>
+            <input
+            value = {this.state.title}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'title'
+            placeholder = 'Название'
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Описание</label>
+            <textarea
+            value = {this.state.description}
+            onChange = {this.onChange}
+            name = 'description'
+            placeholder = 'Описание..'
+            />
+          </div>
+
+          <div className="form-group">
+            <h4>Город</h4>
+            <input
+            value = {this.state.locality}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'locality'
+            placeholder = 'LA'
+            />
+          </div>
+
+          <div className="form-group">
+            <h4>Страна</h4>
+            <input
+            value = {this.state.country}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'country'
+            placeholder = 'USA'
+            />
+          </div>
+
+          <div className="form-group">
+            <h4>Адрес</h4>
+            <input
+            value = {this.state.address}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'address'
+            placeholder = 'Brooklyn'
+            />
+          </div>
+
+
+          <div className="form-group">
+            <h4>Стоимость</h4>
+            <input
+            value = {this.state.cost}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'cost'
+            placeholder = '10'
+            />
+          </div>
+
+
+
+          <div className="form-group">
+            <h4>Дата начала</h4>
+            <input
+            value = {this.state.date_begin}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'date_begin'
+            placeholder = 'Дата'
+            />
+          </div>
+
+          <div className="form-group">
+            <h4>Дата окончания</h4>
+            <input
+            value = {this.state.date_end}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'date_end'
+            placeholder = 'Дата'
+            />
+          </div>
+
+          <div className="form-group">
+            <h4>Время начала</h4>
+            <input
+            value = {this.state.time_begin}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'time_begin'
+            placeholder = 'Время'
+            />
+          </div>
+
+
+          <div className="form-group">
+            <h4>Время окончания</h4>
+            <input
+            value = {this.state.time_end}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'time_end'
+            placeholder = 'Время'
+            />
+          </div>
+
+          <div className="filters">
+            <div className="tag-filter">
+              <h4>Выберите тэг</h4>
+              <Tags tags={this.state.currentTags} allTags={this.state.tags} changeTags={this.handler.bind(this)} selectTag={this.selectTag.bind(this)} isClickable={true}/>
+            </div>
+            <div className="tag-selected">
+              <h4>Выбранные тэги</h4>
+              <Tags tags={this.state.currentSelectedTags} isClickable={false} />
+>>>>>>> 68a3951b56e7eae6ea6b5bf98c79210a0c362153
             </div>
           );
     }

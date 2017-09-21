@@ -16,8 +16,8 @@ class Navbar extends React.Component {
             <ul className="list-unstyled">
               <li className="logo"><a href="/"><img src="/assets/images/hikester_logo.png" className="logo-image"/></a></li>
               <ul className="menu-items">
-                <li><a href="/">Найти событие<i className="fa fa-chevron-left" aria-hidden="true"></i></a></li>
-                <li><a href="/">О проекте<i className="fa fa-chevron-left" aria-hidden="true"></i></a></li>
+                <li><a href="/">Search Events<i className="fa fa-chevron-left" aria-hidden="true"></i></a></li>
+
               </ul>
             </ul>
           </div>
