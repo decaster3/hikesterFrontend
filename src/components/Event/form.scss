@@ -17,6 +17,17 @@
     border-bottom: 2px solid gray;
   }
 }
+.btn-round{
+border-radius: 17px;
+}
+
+.vertical-center {
+  min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+  min-height: 100vh; /* These two lines are counted as one :-)       */
+
+  display: flex;
+  align-items: center;
+}
 
 .bottom-border {
   margin-bottom: 5px;
@@ -46,6 +57,8 @@
   padding-bottom: 5px;
 }
 .filters .tag {
+  background-color: #0d9ae0;
+  color: #FAFAFA;
   margin-bottom: 4px;
   margin-right: 4px;
   padding: 6px;

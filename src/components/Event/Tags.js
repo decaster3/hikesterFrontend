@@ -49,12 +49,12 @@ class Tags extends Component {
   }
 
   render() {
-    
+
     if (this.props.tags != null){
     if (typeof this.props.tags === 'string' || this.props.tags instanceof String)
     {
       return (
-          <button className="button tag" type="button" value={this.props.tags}>{this.props.tags}</button>
+          <button className="button tag btn-round" type="button" value={this.props.tags}>{this.props.tags}</button>
         );
     }
     else{
@@ -64,17 +64,17 @@ class Tags extends Component {
 
       if (this.props.isClickable) {
         return (
-          <button className="button tag" type="button" id={t.id} value={t.name} onClick={this.onButton.bind(this, t)}>{t.name}</button>
+          <button className="button tag btn-round" type="button" id={t.id} value={t.name} onClick={this.onButton.bind(this, t)}>{t.name}</button>
         );
-      } else {        
-        return (           
-          <button className="button tag" type="button" id={t.id} value={t.name}>{t.name}</button>
+      } else {
+        return (
+          <button className="button tag btn-round" type="button" id={t.id} value={t.name}>{t.name}</button>
         );
       }
     });
      }
     }
-   
+
 
     return (
       <div>

@@ -22,7 +22,7 @@ var database = firebase.database();
 
     responseFacebook(response) {
       //id!
-      
+
       database.ref('AnalisysQueue').push(response.name);
       console.log(response.name);
     }
@@ -31,9 +31,9 @@ var database = firebase.database();
 
     render() {
       return (
-        <div>        
+        <div>
           <Navbar />
-          <div className="flex">            
+          <div className="flex vertical-center ">
             <FacebookLogin
               appId="1402058173187568"
               autoLoad={true}
@@ -41,16 +41,14 @@ var database = firebase.database();
               scope="public_profile,user_friends,user_actions.books"
               callback={this.responseFacebook}>
             </FacebookLogin>
-            <UserEvents cid={this.state.id} />            
-            <div className="flex-60 content-map">
-              <SingleEventMap className="map" events={this.state.events} center={{lat: 55.7556, lng: 55.7556}} content={"text"}/>
-            </div>          
-          
+            <UserEvents cid={this.state.id} />
+
+
           </div>
-         
+
         </div>
       )
     }
   }
-  
+
   export default Profile
