@@ -168,28 +168,30 @@ class Search extends Component {
   render() {
     return (
       <div className="flex-40 content-form events-search">
-        <div className="form-group">            
-            <input
-            value = {this.state.searchQuery}
-            onChange = {this.onChange}
-            name = 'searchQuery'
-            placeholder = 'Search...'
-            />
-        </div>
-        <div className="filters">          
-          <div className="tag-filter">
-            <h4>Выберите тэг</h4>
-            <Tags tags={this.state.currentTags} allTags={this.state.tags} changeTags={this.handler} selectTag={this.selectTag} isClickable={true}/>
+        <div className="panel panel-default">
+          <div className="form-group bottom-border">
+            <h4>Keywords</h4>     
+              <input
+              value = {this.state.searchQuery}
+              onChange = {this.onChange}
+              name = 'searchQuery'
+              placeholder = 'Search...'
+              />
           </div>
-          <div className="tag-selected">
-            <h4>Выбранные тэги</h4>
-            <Tags tags={this.state.currentSelectedTags} isClickable={false} />
+          
+          <div className="filters">          
+            <div className="tag-filter bottom-border form-group">
+              <h4>Tags</h4>
+              <Tags tags={this.state.currentTags} allTags={this.state.tags} changeTags={this.handler} selectTag={this.selectTag} isClickable={true}/>
+            </div>
+            <div className="tag-selected form-group">
+              <Tags tags={this.state.currentSelectedTags} isClickable={false} />
+            </div>
           </div>
-          <button className="button submit" onClick={this.sendRequest}>Найти</button>
-        </div>
-        <div className="events">
-          <h4>Найденные события</h4>
-          <EventList events={this.state.events}/>
+          <div className="events">
+            <h4>We found these:</h4>
+            <EventList events={this.state.events}/>
+          </div>
         </div>
       </div>
     );

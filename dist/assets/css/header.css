@@ -8,6 +8,7 @@ header {
   z-index: 999;
   border-bottom: 1px solid #ccc;
   padding-bottom: 1px;
+  box-shadow: 2px 2px 3px #ccc;
 }
 
 header .container {
