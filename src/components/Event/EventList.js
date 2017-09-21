@@ -13,20 +13,37 @@ class EventList extends React.Component {
     if(this.props.events.length != 0){
     var events = this.props.events.map(event => {
       var url = "/single/" + event.event_id;
-      return (<form>
-                <div class="form-group row">              
-                  <label class="col-sm-2 col-form-label">Title</label>
-                  <div class="col-sm-10">
-                    <a className="event" href={url}>{event.name}</a>                           
-                  </div>
-                </div>
-              </form>
-          //<a className="event" href={url}>{event.name}</a>
+      return (<tr>
+                  <td>
+                    <a className="event" href={url}>{event.name}</a>
+                  </td>
+                  <td>
+                    <a className="event" href={url}>{event.date_begin}</a>
+                  </td>
+                  <td>
+                    <a className="event" href={url}>{event.locality}</a>
+                  </td>
+                  <td>
+                    <a className="event" href={url}>{event.address}</a>
+                  </td>
+              </tr>
       );
     })
     return (
       <div className="event-list">
-        {events}
+        <table className=" table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Begin</th>
+              <th>Locality</th>
+              <th>Address</th>
+            </tr>
+          </thead>
+          <tbody>
+            {events}
+          </tbody>
+        </table>
       </div>
     );
     }

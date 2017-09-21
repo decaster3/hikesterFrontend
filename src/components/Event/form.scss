@@ -14,7 +14,7 @@
 
 .events-search {
   .filters {
-    border-bottom: 1px solid #ccc;
+    border-bottom: 2px solid gray;
   }
 }
 .btn-round{
@@ -29,16 +29,36 @@ border-radius: 17px;
   align-items: center;
 }
 
+.bottom-border {
+  margin-bottom: 5px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
 .content-form {
   padding: 5px;
-  flex-direction: column;
-  overflow: scroll;
+  flex-flow: column nowrap;
+  // overflow: scroll;
 }
+
+.panel.panel-default  {
+  height: 90vh;
+  margin: 12px;
+  padding: 10px;
+  box-shadow: 1px 2px 4px gray;
+}
+
+.tag-selected {
+  margin-top: 10px;
+}
+
 .filters {
   width: 100%;
   padding-bottom: 5px;
 }
 .filters .tag {
+  background-color: #0d9ae0;
+  color: #FAFAFA;
   margin-bottom: 4px;
   margin-right: 4px;
   padding: 6px;
