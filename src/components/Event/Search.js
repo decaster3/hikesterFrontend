@@ -38,21 +38,21 @@ class Search extends Component {
     var allTags = [];
     var types = [];
     var t = this;
-    
+
     database.child("event_types").orderByKey().once("value", function(snapshot) {
 
       firstTags = Array.from(snapshot.val())
       allTags = Array.from(snapshot.val())
-     
+
         t.setState({
         currentTags: firstTags,
         tags: allTags,
         currentSelectedTags: []
-      }); 
-  
+      });
+
     });
 
-   
+
   }
 
 
@@ -65,7 +65,7 @@ class Search extends Component {
 
   selectTag(tag, e) {
     this.state.currentSelectedTags[0] = tag;
-    this.setState({currentSelectedTags: this.state.currentSelectedTags});    
+    this.setState({currentSelectedTags: this.state.currentSelectedTags});
     this.sendRequest()
   }
 
@@ -84,25 +84,25 @@ class Search extends Component {
     var body = query.body = {};
     if(this.state.currentSelectedTags.length > 0){
     if(this.state.searchQuery != ''){
-        
+
       body.query = {
         "bool": {
             "should": [
                       {"match": {
                       "type": this.state.currentSelectedTags[0]['name']
                          }},
-                      {"match": {  
-                      "_all": this.state.searchQuery 
+                      {"match": {
+                      "_all": this.state.searchQuery
                          }}
                     ]
                 }
      }
       }
      else{
-      
+
       body.query = {
-      
-      "match": {                
+
+      "match": {
         "type": this.state.currentSelectedTags[0]['name']
       }
      }
@@ -110,10 +110,10 @@ class Search extends Component {
    }
    else{
 
-     if(this.state.searchQuery != ''){  
-     console.log('Entered')    
-      body.query = {      
-      "match": {  
+     if(this.state.searchQuery != ''){
+     console.log('Entered')
+      body.query = {
+      "match": {
         "_all": this.state.searchQuery
       }
    }
@@ -123,12 +123,12 @@ class Search extends Component {
    this.doSearch(query)
   }
 
-  doSearch(query) { 
-     
+  doSearch(query) {
+
     var ref = database.child('search');
-    var key = ref.child('request').push(query).key;   
+    var key = ref.child('request').push(query).key;
     console.log(query)
-    
+
     ref.child('response/'+key).on('value', this.showResults);
   }
 
@@ -137,13 +137,13 @@ class Search extends Component {
     this.setState({
         [e.target.name]: e.target.value
     })
-    
+
     setTimeout(this.sendRequest, 100)
   }
 
 
   showResults(snap){
-    if( !snap.exists() ) {this.state.events = []; return; } 
+    if( !snap.exists() ) {this.state.events = []; return; }
     var dat = snap.val().hits;
 
     // when a value arrives from the database, stop listening
@@ -155,11 +155,11 @@ class Search extends Component {
     // isn't very interesting
     if( snap.val().hits!= null && dat['hits']!= null){
       this.state.events = []
-      dat['hits'].map((t) => {      
+      dat['hits'].map((t) => {
       this.state.events.push(t._source)
     });
-    console.log(dat['hits'])    
-    
+    console.log(dat['hits'])
+
     }
     this.forceUpdate()
   }
@@ -168,7 +168,7 @@ class Search extends Component {
   render() {
     return (
       <div className="flex-40 content-form events-search">
-        <div className="form-group">            
+        <div className="form-group">
             <input
             value = {this.state.searchQuery}
             onChange = {this.onChange}
@@ -176,7 +176,7 @@ class Search extends Component {
             placeholder = 'Search...'
             />
         </div>
-        <div className="filters">          
+        <div className="filters">
           <div className="tag-filter">
             <h4>Выберите тэг</h4>
             <Tags tags={this.state.currentTags} allTags={this.state.tags} changeTags={this.handler} selectTag={this.selectTag} isClickable={true}/>
@@ -185,7 +185,7 @@ class Search extends Component {
             <h4>Выбранные тэги</h4>
             <Tags tags={this.state.currentSelectedTags} isClickable={false} />
           </div>
-          <button className="button submit" onClick={this.sendRequest}>Найти</button>
+          <button className="button submit " onClick={this.sendRequest}>Найти</button>
         </div>
         <div className="events">
           <h4>Найденные события</h4>
