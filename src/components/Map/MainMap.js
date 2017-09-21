@@ -18,30 +18,9 @@ import {
 } from "react-google-maps";
 
 var firebase = require('../firebasecomp.js')();
+var database = firebase.database();
 const geofire = require('geofire');
 const geofireRef = new geofire(firebase.database().ref('locations'))
-
-//-----GeoFire-----------------------
-geofireRef.set('1', [12.4215,24.56436]).then(function() {
- 
- })
-geofireRef.set('2', [28.4215,45.56436]).then(function() {
- 
- })
-geofireRef.set('3', [28.4215,45.56436]).then(function() {
- 
- })
-
-var geoQuery = geofireRef.query({
-  center: [28.3215,45.77436],
-  radius: 100 //kilometers
-});
-
- geoQuery.on("key_entered", function(key, location, distance) {
-        console.log("Bicycle shop " + key + " found at " + location + " (" + distance + " km away)");
-      });
-  
-//-----------------------------------------
 
 
 const geolocation = (
@@ -65,45 +44,43 @@ const ClosureListenersExampleGoogleMap = withGoogleMap(props => (
         <div>{props.content}</div>
       </InfoWindow>
     )}
-    {props.center && (
-      <Circle
-        center={props.center}
-        radius={props.radius}
-        options={{
-          fillColor: 'blue',
-          fillOpacity: 0.20,
-          strokeColor: 'blue',
-          strokeOpacity: 1,
-          strokeWeight: 1,
-        }} />
+  {props.center && (
+    <Circle
+      center={props.center}
+      radius={props.radius}
+      options={{
+        fillColor: 'blue',
+        fillOpacity: 0.20,
+        strokeColor: 'blue',
+        strokeOpacity: 1,
+        strokeWeight: 1,
+      }} />
+  )}
+  {props.markers.map((marker1, index) => {
+    const onClick = () => props.onMarkerClick(marker1);
+    const onCloseClick = () => props.onCloseClick(marker1);
+    const m = marker1;
+    
+    return (        
+      <Marker
+        key={index}
+        position={m.position}
+        title={m.name}
+        onClick={onClick}
+      >
+        {marker1.showInfo && (
+
+          <InfoWindow onCloseClick={onCloseClick}>              
+            <div>
+              <h2>{m.name}</h2>
+              <br/>
+              <h2>{m.description}</h2>                                 
+              <button className="button submit">Присоединиться</button>
+            </div>
+          </InfoWindow>
         )}
-    {props.markers.map((marker, index) => {
-      const onClick = () => props.onMarkerClick(marker);
-      const onCloseClick = () => props.onCloseClick(marker);
-      const m = marker;
-
-      
-
-      return (
-        <Marker
-          key={index}
-          position={marker.position}
-          title={(index + 1).toString()}
-          onClick={onClick}
-        >
-          {marker.showInfo && (
-            <InfoWindow onCloseClick={onCloseClick}>
-              <div>
-                <h2>Название мероприятние</h2>
-                <div>
-                  Описание мероприятия
-                </div>
-                <button className="button submit">Присоединиться</button>
-              </div>
-            </InfoWindow>
-          )}
-        </Marker>
-      );
+      </Marker>
+    );
     })}
   </GoogleMap>
 ));
@@ -117,9 +94,11 @@ export default class MainMap extends Component {
       super(props)
       this.state = {
         center: null,
-        content: null,
+        content: [],
         radius: 2000,
         markers: [],
+        events: [],
+        kostil_events: [],
         kostil_markers: []
       };
       this.isUnmounted = false;
@@ -127,14 +106,19 @@ export default class MainMap extends Component {
       this.handleCloseClick = this.handleCloseClick.bind(this);
       this.generateInitialMarkers = this.generateInitialMarkers.bind(this);
       this.kistil = this.kostil.bind(this)
+      this.markers = this.markers.bind(this)
+      this.superMarkers = this.superMarkers.bind(this)
+      this.kostil_markers = this.kostil_markers.bind(this)
+      this.kostil_superMarkers = this.kostil_superMarkers.bind(this)
+      this.generateInitialKostilMarkers = this.generateInitialKostilMarkers.bind(this)
   }
 
   generateInitialMarkers(e) {
     const markers = [];
 
     this.state.events.map((event)=> {
-      const lat = event.lattitude;
-      const lng = event.longitude;
+      const lat = event.lat;
+      const lng = event.lng;
 
       const position = new google.maps.LatLng(lat,lng);
 
@@ -147,6 +131,27 @@ export default class MainMap extends Component {
     })
 
     return markers;
+  }
+
+
+   generateInitialKostilMarkers(e) {
+    const kostil_markers = [];
+
+    this.state.kostil_events.map((event)=> {
+      const lat = event.lat;
+      const lng = event.lng;
+
+      const position = new google.maps.LatLng(lat,lng);
+
+      kostil_markers.push({
+        position,
+        description: event.description,
+        name: event.name,
+        showInfo: false,
+      });
+    })
+
+    return kostil_markers;
   }
 
   componentDidMount() {
@@ -188,41 +193,75 @@ export default class MainMap extends Component {
       });
     });
     geolocation.getCurrentPosition((position) => {
-          const url = 'http://localhost:3000/v1/events/show'+'?lat='
-           + position.coords.latitude + '&lng=' +position.coords.longitude + '&dist=1000'
-          fetch(url)
-          .then((response) => response.json())
-          .then((data) => {
-            var result = data.events
-            this.setState({events: result})
-            //console.log(this.state.events)
-          })
-          .then(() => {
-            this.setState({
-              markers: this.generateInitialMarkers()
-            })
-          })
-        })
-  }
+          
+        var geoQuery = geofireRef.query({
+          center: [position.coords.latitude, position.coords.longitude],
+          radius: 10 //kilometers
+        });
 
+        geoQuery.on("key_entered", this.markers)
+
+         
+  });
+}
+
+
+    markers(key, location, distance){
+      
+      database.ref('events').child(key)
+        .once('value')
+        .then(this.superMarkers)
+
+      
+   }
+
+
+
+   superMarkers(snapshot){
+
+    var value = snapshot.val();
+    this.state.events.push(value)
+    console.log(this.state.events)
+    this.setState({
+          markers: this.generateInitialMarkers()          
+      })
+    this.forceUpdate()
+   }
+
+
+    kostil_markers(key, location, distance){
+      
+      database.ref('events').child(key)
+        .once('value')
+        .then(this.kostil_superMarkers)
+
+      
+   }
+
+
+
+   kostil_superMarkers(snapshot){
+
+    var value = snapshot.val();
+    this.state.kostil_events.push(value)    
+    this.setState({
+          kostil_markers: this.generateInitialKostilMarkers()          
+      })
+    this.forceUpdate()
+   }
 
   kostil(){
-    geolocation.getCurrentPosition((position) => {
-      const url = 'http://localhost:3000/v1/events/show'+'?lat='
-       + position.coords.latitude + '&lng=' +position.coords.longitude + '&dist=1000'
-      fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        var result = data.events
-        this.setState({events: result})
-        //console.log(this.state.events)
-      })
-      .then(() => {
-        this.setState({
-          kostil_markers: this.generateInitialMarkers()
-        })
-      })
-    })
+      geolocation.getCurrentPosition((position) => {
+          
+        var geoQuery = geofireRef.query({
+          center: [position.coords.latitude, position.coords.longitude],
+          radius: 100 //kilometers
+        });
+
+         geoQuery.on("key_entered", this.kostil_markers)
+
+         
+  });
   }
 
   componentWillUnmount() {
@@ -241,6 +280,7 @@ export default class MainMap extends Component {
         return marker;
       }),
     });
+     this.forceUpdate()
   }
 
   handleCloseClick(targetMarker) {
@@ -258,9 +298,10 @@ export default class MainMap extends Component {
     this.setState({
       markers: this.state.kostil_markers
     })
+    this.forceUpdate()
   }
 
-  render() {
+  render() { 
     return (<div className="map">
       <ClosureListenersExampleGoogleMap
         containerElement={
@@ -273,7 +314,7 @@ export default class MainMap extends Component {
         content={this.state.content}
         radius={this.state.radius}
         onMarkerClick={this.handleMarkerClick}
-        onCloseClick={this.handleCloseClick}
+        onCloseClick={this.handleCloseClick}        
         markers={this.state.markers}
       />
       </div>

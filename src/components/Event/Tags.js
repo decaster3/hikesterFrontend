@@ -44,27 +44,36 @@ class Tags extends Component {
   }
 
   getChilds(tag){
-    var childs = this.props.allTags[tag.id.toString()];
+    var childs = this.props.tags
     return childs;
   }
 
   render() {
-    console.log(this.props.tags)
-    var tags = this.props.tags
-    //var tags = this.props.tags.map((t) => 
-     for (var i = 0; i < tags.length; i++) {
+    
+    if (this.props.tags != null){
+    if (typeof this.props.tags === 'string' || this.props.tags instanceof String)
+    {
+      return (
+          <button className="button tag" type="button" value={this.props.tags}>{this.props.tags}</button>
+        );
+    }
+    else{
+
+    var tags = Array.from(this.props.tags)
+    var tags = tags.map((t) => {
+
       if (this.props.isClickable) {
         return (
-          <button className="button tag" type="button" id={tags[i].id} value={tags[i].name} onClick={this.onButton.bind(this, tags[i])}>{tags[i].name}</button>
+          <button className="button tag" type="button" id={t.id} value={t.name} onClick={this.onButton.bind(this, t)}>{t.name}</button>
         );
-      } else {
-        console.log(tags[i]);
+      } else {        
         return (           
-          <button className="button tag" type="button" id={tags[i].id} value={tags[i].name}>{tags[i].name}</button>
+          <button className="button tag" type="button" id={t.id} value={t.name}>{t.name}</button>
         );
       }
+    });
+     }
     }
-
    
 
     return (

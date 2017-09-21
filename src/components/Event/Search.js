@@ -18,11 +18,15 @@ class Search extends Component {
       currentTags: [],
       currentSelectedTags: [],
       tags: [],
-      events: []
+      events: [],
+      searchQuery: ''
     }
     this.handler = this.handler.bind(this)
     this.selectTag = this.selectTag.bind(this)
     this.sendRequest = this.sendRequest.bind(this)
+    this.doSearch = this.doSearch.bind(this)
+    this.showResults = this.showResults.bind(this)
+    this.onChange = this.onChange.bind(this)
   }
 
 
@@ -35,24 +39,11 @@ class Search extends Component {
     var types = [];
     var t = this;
     
-    database.child("EventTypes").orderByKey().once("value", function(snapshot) {
+    database.child("event_types").orderByKey().once("value", function(snapshot) {
 
-     snapshot.val().map((r) => {
-
-        if (r.parent_event_type_id === 0)
-          firstTags.push({id: r.id, name: r.name, parent: r.parent_event_type_id})
-
-        var key1 = r.parent_event_type_id;
-        var value = allTags[key1]
-
-        if (value === undefined) {
-          value = []
-        }
-
-        value.push(r);
-        allTags[key1.toString()] = value;      
-
-      });  
+      firstTags = Array.from(snapshot.val())
+      allTags = Array.from(snapshot.val())
+     
         t.setState({
         currentTags: firstTags,
         tags: allTags,
@@ -73,9 +64,9 @@ class Search extends Component {
   }
 
   selectTag(tag, e) {
-    this.state.currentSelectedTags.push(tag);
-    this.setState({currentSelectedTags: this.state.currentSelectedTags});
-    console.log(this.state.currentSelectedTags);
+    this.state.currentSelectedTags[0] = tag;
+    this.setState({currentSelectedTags: this.state.currentSelectedTags});    
+    this.sendRequest()
   }
 
   sendRequest(e) {
@@ -85,29 +76,107 @@ class Search extends Component {
       return type.name;
     });
 
-    var data = new FormData();
-    data.append("types", value[value.length - 1]);
+    var query = {
+      index: 'firebase',
+      type: 'event'
+    };
 
+    var body = query.body = {};
+    if(this.state.currentSelectedTags.length > 0){
+    if(this.state.searchQuery != ''){
+        
+      body.query = {
+        "bool": {
+            "should": [
+                      {"match": {
+                      "type": this.state.currentSelectedTags[0]['name']
+                         }},
+                      {"match": {  
+                      "_all": this.state.searchQuery 
+                         }}
+                    ]
+                }
+     }
+      }
+     else{
+      
+      body.query = {
+      
+      "match": {                
+        "type": this.state.currentSelectedTags[0]['name']
+      }
+     }
+    }
+   }
+   else{
 
-    
-    var push = url.push();
-    var key = push.key;
-    push.set(value);
+     if(this.state.searchQuery != ''){  
+     console.log('Entered')    
+      body.query = {      
+      "match": {  
+        "_all": this.state.searchQuery
+      }
+   }
+ }
+}
 
-    url.child(key).on('child_changed', function(snap){
-      var val = snap.val();
-      this.setState({
-        events: val.events,
-        currentSelectedTags: [],
-        currentTags: this.state.tags["0"]
-      });   
-    });
+   this.doSearch(query)
   }
+
+  doSearch(query) { 
+     
+    var ref = database.child('search');
+    var key = ref.child('request').push(query).key;   
+    console.log(query)
+    
+    ref.child('response/'+key).on('value', this.showResults);
+  }
+
+  onChange(e){
+
+    this.setState({
+        [e.target.name]: e.target.value
+    })
+    
+    setTimeout(this.sendRequest, 100)
+  }
+
+
+  showResults(snap){
+    if( !snap.exists() ) {this.state.events = []; return; } 
+    var dat = snap.val().hits;
+
+    // when a value arrives from the database, stop listening
+    // and remove the temporary data from the database
+    snap.ref.off('value', this.showResults);
+    snap.ref.remove();
+
+    // the rest of this just displays data in our demo and probably
+    // isn't very interesting
+    if( snap.val().hits!= null && dat['hits']!= null){
+      this.state.events = []
+      dat['hits'].map((t) => {      
+      this.state.events.push(t._source)
+    });
+    console.log(dat['hits'])    
+    
+    }
+    this.forceUpdate()
+  }
+
 
   render() {
     return (
       <div className="flex-40 content-form events-search">
-        <div className="filters">
+        <div className="form-group">            
+            <input
+            value = {this.state.searchQuery}
+            onChange = {this.onChange}
+            name = 'searchQuery'
+            placeholder = 'Search...'
+            />
+        </div>
+        <div className="filters">          
           <div className="tag-filter">
             <h4>Выберите тэг</h4>
             <Tags tags={this.state.currentTags} allTags={this.state.tags} changeTags={this.handler} selectTag={this.selectTag} isClickable={true}/>

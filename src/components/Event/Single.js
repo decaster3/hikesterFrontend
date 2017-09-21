@@ -3,45 +3,59 @@ import style from './form.scss';
 import Tags from './Tags';
 
 var firebase = require('../firebasecomp.js')();
-var database = firebase.database().ref('Events');
-
+var database = firebase.database().ref('events');
+var t = {}
 class Single extends React.Component {
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      tags: [],
+    this.state = {      
+      type: [],
       showJoinButton: true,
       people_count: 0
     };
+
+    this.updateInfo = this.updateInfo.bind(this)
+    
   }
+
+  
+
 
   componentWillMount() {
    
-   var newEvent = []
-  
-    database.child(this.props.id).once('value', function(snapshot){
-      newEvent = snapshot.val();      
-      newEvent.showJoinButton = true;
-      var arrayOfTags = new Array();
-      for (var items in newEvent.tags){
-      arrayOfTags.push( newEvent.tags[items] );
-      }
-      newEvent.tags = arrayOfTags;
-      console.log(arrayOfTags);
-    });
+     database.child(this.props.id).once('value', this.updateInfo)     
     
+  }
 
 
 
-    
-    this.state = newEvent;
-    console.log(this.state);    
+  updateInfo(snapshot){
+      var newEvent = snapshot.val();           
+      var showJoinButton = true      
+      
+      var users = newEvent.participants
+      Object.keys(users).forEach(function(key){
+        if(key === firebase.auth().currentUser.uid)
+        {
+          showJoinButton = false;
+        }
+      });
+      console.log(users)
+      this.state = newEvent
+      this.state.showJoinButton = showJoinButton
+      this.forceUpdate()
+
+      console.log(this.state)
+  }
+
+  componentDidMount(){
+       
   }
 
   joinHandler(e) {
-    var url = database.child(this.state.event_id + '/Users');
+    var url = database.child(this.state.event_id + '/users');
 
     var data = {'profile_id': 1}; 
 
@@ -56,7 +70,7 @@ class Single extends React.Component {
     push.set(data);
       
       var push2 =  database.child(this.state.event_id + '/people_count');      
-      var people_count = this.state.people_count + 1;
+      var people_count = (parseInt(this.state.people_count) + 1).toString();
       push2.set(people_count);
       this.setState({people_count: people_count})
       this.state.showJoinButton = false;
@@ -64,6 +78,7 @@ class Single extends React.Component {
   }
 
   render() {
+
     return (
       <div className="flex-40 content-form events-create">
         <div className="filters">
@@ -75,7 +90,7 @@ class Single extends React.Component {
             <div className="description">
               {this.state.description}
             </div>
-          </div>
+          </div>          
           <div className="form-group">
             <h4>Кол-во участников</h4>
             <div className="description">
@@ -84,7 +99,7 @@ class Single extends React.Component {
           </div>
           <div className="tag-filter">
             <h4>Тэги события</h4>
-            <Tags tags={this.state.tags} isClickable={false}/>
+            <Tags tags={this.state.type} isClickable={false}/>
           </div>
           { this.state.showJoinButton == true ?
               <button className="button submit" data-id={this.state.id} onClick={this.joinHandler.bind(this)}>Присоединиться</button>

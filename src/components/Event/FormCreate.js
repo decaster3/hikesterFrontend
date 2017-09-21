@@ -8,6 +8,10 @@ var firebase = require('../firebasecomp.js')();
 
 var database = firebase.database().ref();
 
+const geofire = require('geofire');
+const geofireRef = new geofire(firebase.database().ref('locations'))
+
+
 class FormCreate extends Component {
   constructor(props){
     super(props);
@@ -16,91 +20,98 @@ class FormCreate extends Component {
     this.state = {      
       description: '',
       title: '',
-      location: {},
-      date: '',
-      time: '',
+      lat: '',
+      lng: '',
+      date_begin: '',
+      date_end: '',
+      time_begin: '',
+      time_end: '',
       locality: '',
       country: '',
       cost: '',
-      address: '',
-      duration: '',
+      address: '',      
       people_count: '',
       creator_rating: '5',
       types: [...arr],
       tags: [],
+      currentUser: [],
       currentSelectedTags: [],
       currentTags: []
     }
 
     this.onChange = this.onChange.bind(this)
     this.onSubmit = this.onSubmit.bind(this)
+    this.getCurUser = this.getCurUser.bind(this)
   }
 
-  componentWillMount() {
+  getCurUser(snap){
+     
+      this.currentUser = snap.val()
+  }
 
+  componentDidMount() {
+
+    var usersrUrl = database.child("users")
     var firstTags = [];
     var allTags = [];
     var types = [];
     var t = this;
-    
+    var user = firebase.auth().currentUser;
+    var uid = 't0d1czkMysbAT3hL8rNPURXSNjr2'
+
+    usersrUrl.orderByChild("id").equalTo(uid).once("value", this.getCurUser)
+
+
+    var a = firebase.auth()
+    console.log(firebase.auth().currentUser)
     database.child("event_types").orderByKey().once("value", function(snapshot) {
-      firstTags = snapshot.val()
-      allTags = snapshot.val()
-     snapshot.val().map((r) => {
-
-        // if (r.parent_event_type_id === 0)
-        //   firstTags.push({id: r.id, name: r.name, parent: r.parent_event_type_id})
-
-        // var key1 = r.parent_event_type_id;        
-        // var value = allTags[key1]
-
-        // if (value === undefined) {
-        //   value = []
-        // }
-
-        // value.push(r);
-        // allTags[key1.toString()] = value;      
-
-      });  
+       firstTags = Array.from(snapshot.val())
+      allTags = Array.from(snapshot.val())
+     
         t.setState({
         currentTags: firstTags,
         tags: allTags,
-        currentSelectedTags: ''
-      }); 
+        currentSelectedTags: []
+  }); 
 
   
-    });
+  });
 
   
   }
+
 
   onSubmit(e){
 
     this.state.location = this.props.location;
     e.preventDefault();
 
+    var usersrUrl = database.child("users")
     var url = database.child("events");
-
+    var user = firebase.auth().currentUser;
+    console.log(user)
+    if (user) {    
+   
+    console.log(this.currentUser)
     var values = {      
       "people_count": 1,      
-      "creator_id": 0,
+      "creator": this.currentUser,
       "name": this.state.title,
       "description": this.state.description,
-      "lattitude": this.state.location.lat,
-      "longitude": this.state.location.lng,
-      "date": this.state.date,
+      "lat": this.state.location.lat,
+      "lng": this.state.location.lng,
+      "date_begin": this.state.date_begin,
+      "date_end": this.state.date_end,
+      "time_begin": this.state.time_begin,
+      "date_end": this.state.date_end,
       "locality": this.state.locality,
-      "country": this.state.country,
-      "time": this.state.time,
-      "people_count": this.state.time.people_count,
-      "creator_rating": '5',
-      "duration": this.state.duration,
-      "cost": this.state.cost,
+      "country": this.state.country,           
+      "creator_rating": parseFloat('5'),      
+      "cost": parseFloat(this.state.cost),
       "address": this.state.address,
-      "type": this.state.currentSelectedTags,
-      "users":{
-        "0": 0
-      }
+      "type": this.state.currentSelectedTags[0]['name'],
+      "participants":this.currentUser          
+      
     };
 
     
@@ -116,13 +127,21 @@ class FormCreate extends Component {
     var key = push.key;
     values.event_id = key;
     push.set(values);
+    console.log(this.currentUser)
 
+    var usersRef = usersrUrl.child(this.currentUser['t0d1czkMysbAT3hL8rNPURXSNjr2'].id).child("events/"+values.event_id.toString()).set(values)
 
+    geofireRef.set(values.event_id, [values.lat,values.lng]).then(function() {
+ 
+    })
 
     console.log(key);
-    browserHistory.push('/single/' + key);    
+    browserHistory.push('/single/' + key);  
+    }
 
-
+    else {
+      browserHistory.push('/login/' + key);
+    }
   }
 
   onChange(e){
@@ -138,7 +157,7 @@ class FormCreate extends Component {
   }
 
   selectTag(tag, e) {
-    this.state.currentSelectedTags.push(tag);
+     this.state.currentSelectedTags[0] = tag;
     this.setState({currentSelectedTags: this.state.currentSelectedTags});
     console.log(this.state.currentSelectedTags);
   }
@@ -203,17 +222,7 @@ class FormCreate extends Component {
             />
           </div>
 
-          <div className="form-group">
-            <h4>Продолжительность(Часы)</h4>
-            <input
-            value = {this.state.duration}
-            onChange = {this.onChange}
-            type = 'text'
-            name = 'duration'
-            placeholder = '5'
-            />
-          </div>
-
+          
           <div className="form-group">
             <h4>Стоимость</h4>
             <input
@@ -228,23 +237,46 @@ class FormCreate extends Component {
 
 
           <div className="form-group">
-            <h4>Дата</h4>
+            <h4>Дата начала</h4>
             <input
-            value = {this.state.date}
+            value = {this.state.date_begin}
             onChange = {this.onChange}
             type = 'text'
-            name = 'date'
+            name = 'date_begin'
             placeholder = 'Дата'
             />
           </div>
 
           <div className="form-group">
-            <h4>Время</h4>
+            <h4>Дата окончания</h4>
             <input
-            value = {this.state.time}
+            value = {this.state.date_end}
             onChange = {this.onChange}
             type = 'text'
-            name = 'time'
+            name = 'date_end'
+            placeholder = 'Дата'
+            />
+          </div>
+
+          <div className="form-group">
+            <h4>Время начала</h4>
+            <input
+            value = {this.state.time_begin}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'time_begin'
+            placeholder = 'Время'
+            />
+          </div>
+
+
+          <div className="form-group">
+            <h4>Время окончания</h4>
+            <input
+            value = {this.state.time_end}
+            onChange = {this.onChange}
+            type = 'text'
+            name = 'time_end'
             placeholder = 'Время'
             />
           </div>
@@ -252,7 +284,7 @@ class FormCreate extends Component {
           <div className="filters">
             <div className="tag-filter">
               <h4>Выберите тэг</h4>
-              <Tags tags={this.state.tags} allTags={this.state.tags} changeTags={this.handler.bind(this)} selectTag={this.selectTag.bind(this)} isClickable={true}/>
+              <Tags tags={this.state.currentTags} allTags={this.state.tags} changeTags={this.handler.bind(this)} selectTag={this.selectTag.bind(this)} isClickable={true}/>
             </div>
             <div className="tag-selected">
               <h4>Выбранные тэги</h4>
