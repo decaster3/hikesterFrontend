@@ -166,6 +166,12 @@ class Search extends Component {
 
 
   render() {
+    var choosenTags;
+    if (this.state.currentSelectedTags.length > 0)
+      choosenTags = (<div className="tag-selected">
+        <h4>Выбранные тэги</h4>
+        <Tags tags={this.state.currentSelectedTags} isClickable={false} />
+      </div>);
     return (
       <div className="flex-40 content-form events-search">
         <div className="form-group">
@@ -181,11 +187,9 @@ class Search extends Component {
             <h4>Выберите тэг</h4>
             <Tags tags={this.state.currentTags} allTags={this.state.tags} changeTags={this.handler} selectTag={this.selectTag} isClickable={true}/>
           </div>
-          <div className="tag-selected">
-            <h4>Выбранные тэги</h4>
-            <Tags tags={this.state.currentSelectedTags} isClickable={false} />
-          </div>
-          <button className="button submit " onClick={this.sendRequest}>Найти</button>
+
+          {choosenTags}
+
         </div>
         <div className="events">
           <h4>Найденные события</h4>

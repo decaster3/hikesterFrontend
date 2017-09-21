@@ -68,7 +68,7 @@ class Tags extends Component {
         );
       } else {
         return (
-          <button className="button tag label primary" type="button" id={t.id} value={t.name}>{t.name}</button>
+          <button className="button tag btn-round" type="button" id={t.id} value={t.name}>{t.name}</button>
         );
       }
     });
