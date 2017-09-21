@@ -28,7 +28,7 @@ var users = firebase.database().ref("users");
     this.onSubmit = this.onSubmit.bind(this)
 }
 
-	onSubmit(e){
+	onSubmit(e){    
 		firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password).catch(function(error) {
 		  console.log(error.message);      
 		}); 
@@ -48,73 +48,91 @@ var users = firebase.database().ref("users");
         	[e.target.name]: e.target.value
     		})
 	};
+  componentWillMount() {
+    firebase.auth().signInWithEmailAndPassword("aydar08942@gmail.com", "qbasik007").catch(function(error) {
+      // Handle Errors here.
+      console.log(error.code);
+      console.log(error.message);
+      // ...
+    });
+    var user = firebase.auth().currentUser;  
+    alert(user);  
+  }
 
 
 	render(){
-		return(
+    
+    if(firebase.auth().currentUser != null)
+    {
+  		return(
 
-	  <form onSubmit = {this.onSubmit}>
+  	  <form onSubmit = {this.onSubmit}>
 
-          <div className="form-group">
-            <h4>Email</h4>
-            <input
-            value = {this.state.email}
-            name = 'email'
-            onChange = {this.onChange}            
-            placeholder = 'email'
-            />
-          </div>
-           <div className="form-group">
-            <h4>Password</h4>
-            <input
-            value = {this.state.password}
-            name = 'password'
-            onChange = {this.onChange}            
-            placeholder = 'Password'
-            />
-          </div>    
-          <div className="form-group">
-            <h4>Login</h4>
-            <input
-            value = {this.state.username}
-            name = 'username'
-            onChange = {this.onChange}            
-            placeholder = 'Login'
-            />
-          </div>
-           <div className="form-group">
-            <h4>Name</h4>
-            <input
-            value = {this.state.name}
-            name = 'name'
-            onChange = {this.onChange}            
-            placeholder = 'Password'
-            />
-          </div>     
-          <div className="form-group">
-            <h4>Country</h4>
-            <input
-            value = {this.state.country}
-            name = 'country'
-            onChange = {this.onChange}            
-            placeholder = 'USA'
-            />
-          </div>
-           <div className="form-group">
-            <h4>City</h4>
-            <input
-            value = {this.state.city}
-            name = 'city'
-            onChange = {this.onChange}            
-            placeholder = 'New York'
-            />
-          </div>          
+            <div className="form-group">
+              <h4>Email</h4>
+              <input
+              value = {this.state.email}
+              name = 'email'
+              onChange = {this.onChange}            
+              placeholder = 'email'
+              />
+            </div>
+             <div className="form-group">
+              <h4>Password</h4>
+              <input
+              value = {this.state.password}
+              name = 'password'
+              onChange = {this.onChange}            
+              placeholder = 'Password'
+              />
+            </div>    
+            <div className="form-group">
+              <h4>Login</h4>
+              <input
+              value = {this.state.username}
+              name = 'username'
+              onChange = {this.onChange}            
+              placeholder = 'Login'
+              />
+            </div>
+             <div className="form-group">
+              <h4>Name</h4>
+              <input
+              value = {this.state.name}
+              name = 'name'
+              onChange = {this.onChange}            
+              placeholder = 'Password'
+              />
+            </div>     
+            <div className="form-group">
+              <h4>Country</h4>
+              <input
+              value = {this.state.country}
+              name = 'country'
+              onChange = {this.onChange}            
+              placeholder = 'USA'
+              />
+            </div>
+             <div className="form-group">
+              <h4>City</h4>
+              <input
+              value = {this.state.city}
+              name = 'city'
+              onChange = {this.onChange}            
+              placeholder = 'New York'
+              />
+            </div>          
 
-          <button className="submit">Зарегистрироваться</button>
+            <button className="submit">Зарегистрироваться</button>
 
-        </form>
+          </form>
 
-		)
+  		)
+    }
+    else{
+      return(<div>Hello, user!</div>)
+    }
+
 	}
 }
 

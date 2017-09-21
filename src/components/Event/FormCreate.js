@@ -51,6 +51,7 @@ class FormCreate extends Component {
 
   componentDidMount() {
 
+
     var usersrUrl = database.child("users")
     var firstTags = [];
     var allTags = [];
@@ -163,142 +164,149 @@ class FormCreate extends Component {
   }
 
   render(){
-     console.log(this.state.currentTags)
-    return (
-      <div className="flex-40 content-form events-create">
-        <form onSubmit = {this.onSubmit}>
+    if(firebase.auth().currentUser != null)
+    {
+      return (
+            <div className="flex-40 content-form events-create">
+              <form onSubmit = {this.onSubmit}>
 
-          <div className="form-group">
-            <h4>Название события</h4>
-            <input
-            value = {this.state.title}
-            onChange = {this.onChange}
-            type = 'text'
-            name = 'title'
-            placeholder = 'Название'
-            />
-          </div>
+                <div className="form-group">
+                  <h4>Название события</h4>
+                  <input
+                  value = {this.state.title}
+                  onChange = {this.onChange}
+                  type = 'text'
+                  name = 'title'
+                  placeholder = 'Название'
+                  />
+                </div>
 
-          <div className="form-group">
-            <label>Описание</label>
-            <textarea
-            value = {this.state.description}
-            onChange = {this.onChange}
-            name = 'description'
-            placeholder = 'Описание..'
-            />
-          </div>
+                <div className="form-group">
+                  <label>Описание</label>
+                  <textarea
+                  value = {this.state.description}
+                  onChange = {this.onChange}
+                  name = 'description'
+                  placeholder = 'Описание..'
+                  />
+                </div>
 
-          <div className="form-group">
-            <h4>Город</h4>
-            <input
-            value = {this.state.locality}
-            onChange = {this.onChange}
-            type = 'text'
-            name = 'locality'
-            placeholder = 'LA'
-            />
-          </div>
+                <div className="form-group">
+                  <h4>Город</h4>
+                  <input
+                  value = {this.state.locality}
+                  onChange = {this.onChange}
+                  type = 'text'
+                  name = 'locality'
+                  placeholder = 'LA'
+                  />
+                </div>
 
-          <div className="form-group">
-            <h4>Страна</h4>
-            <input
-            value = {this.state.country}
-            onChange = {this.onChange}
-            type = 'text'
-            name = 'country'
-            placeholder = 'USA'
-            />
-          </div>
+                <div className="form-group">
+                  <h4>Страна</h4>
+                  <input
+                  value = {this.state.country}
+                  onChange = {this.onChange}
+                  type = 'text'
+                  name = 'country'
+                  placeholder = 'USA'
+                  />
+                </div>
 
-          <div className="form-group">
-            <h4>Адрес</h4>
-            <input
-            value = {this.state.address}
-            onChange = {this.onChange}
-            type = 'text'
-            name = 'address'
-            placeholder = 'Brooklyn'
-            />
-          </div>
+                <div className="form-group">
+                  <h4>Адрес</h4>
+                  <input
+                  value = {this.state.address}
+                  onChange = {this.onChange}
+                  type = 'text'
+                  name = 'address'
+                  placeholder = 'Brooklyn'
+                  />
+                </div>
 
-          
-          <div className="form-group">
-            <h4>Стоимость</h4>
-            <input
-            value = {this.state.cost}
-            onChange = {this.onChange}
-            type = 'text'
-            name = 'cost'
-            placeholder = '10'
-            />
-          </div>
-
-
-
-          <div className="form-group">
-            <h4>Дата начала</h4>
-            <input
-            value = {this.state.date_begin}
-            onChange = {this.onChange}
-            type = 'text'
-            name = 'date_begin'
-            placeholder = 'Дата'
-            />
-          </div>
-
-          <div className="form-group">
-            <h4>Дата окончания</h4>
-            <input
-            value = {this.state.date_end}
-            onChange = {this.onChange}
-            type = 'text'
-            name = 'date_end'
-            placeholder = 'Дата'
-            />
-          </div>
-
-          <div className="form-group">
-            <h4>Время начала</h4>
-            <input
-            value = {this.state.time_begin}
-            onChange = {this.onChange}
-            type = 'text'
-            name = 'time_begin'
-            placeholder = 'Время'
-            />
-          </div>
+                
+                <div className="form-group">
+                  <h4>Стоимость</h4>
+                  <input
+                  value = {this.state.cost}
+                  onChange = {this.onChange}
+                  type = 'text'
+                  name = 'cost'
+                  placeholder = '10'
+                  />
+                </div>
 
 
-          <div className="form-group">
-            <h4>Время окончания</h4>
-            <input
-            value = {this.state.time_end}
-            onChange = {this.onChange}
-            type = 'text'
-            name = 'time_end'
-            placeholder = 'Время'
-            />
-          </div>
 
-          <div className="filters">
-            <div className="tag-filter">
-              <h4>Выберите тэг</h4>
-              <Tags tags={this.state.currentTags} allTags={this.state.tags} changeTags={this.handler.bind(this)} selectTag={this.selectTag.bind(this)} isClickable={true}/>
+                <div className="form-group">
+                  <h4>Дата начала</h4>
+                  <input
+                  value = {this.state.date_begin}
+                  onChange = {this.onChange}
+                  type = 'text'
+                  name = 'date_begin'
+                  placeholder = 'Дата'
+                  />
+                </div>
+
+                <div className="form-group">
+                  <h4>Дата окончания</h4>
+                  <input
+                  value = {this.state.date_end}
+                  onChange = {this.onChange}
+                  type = 'text'
+                  name = 'date_end'
+                  placeholder = 'Дата'
+                  />
+                </div>
+
+                <div className="form-group">
+                  <h4>Время начала</h4>
+                  <input
+                  value = {this.state.time_begin}
+                  onChange = {this.onChange}
+                  type = 'text'
+                  name = 'time_begin'
+                  placeholder = 'Время'
+                  />
+                </div>
+
+
+                <div className="form-group">
+                  <h4>Время окончания</h4>
+                  <input
+                  value = {this.state.time_end}
+                  onChange = {this.onChange}
+                  type = 'text'
+                  name = 'time_end'
+                  placeholder = 'Время'
+                  />
+                </div>
+
+                <div className="filters">
+                  <div className="tag-filter">
+                    <h4>Выберите тэг</h4>
+                    <Tags tags={this.state.currentTags} allTags={this.state.tags} changeTags={this.handler.bind(this)} selectTag={this.selectTag.bind(this)} isClickable={true}/>
+                  </div>
+                  <div className="tag-selected">
+                    <h4>Выбранные тэги</h4>
+                    <Tags tags={this.state.currentSelectedTags} isClickable={false} />
+                  </div>
+                </div>
+
+                <h4 className="warning">Поставьте метку события на карте</h4>
+
+                <button className="button submit">Создать событие</button>
+
+              </form>
             </div>
-            <div className="tag-selected">
-              <h4>Выбранные тэги</h4>
-              <Tags tags={this.state.currentSelectedTags} isClickable={false} />
-            </div>
-          </div>
-
-          <h4 className="warning">Поставьте метку события на карте</h4>
-
-          <button className="button submit">Создать событие</button>
-
-        </form>
-      </div>
-    );
+          );
+    }
+    else
+    {
+      return(<div>First login</div>);
+    }
+    
   }
 }
 export default FormCreate
